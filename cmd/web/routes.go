@@ -58,7 +58,8 @@ func routes(app *config.AppConfig) http.Handler {
 		router.Get("/reservations-all", handlers.Repo.AdminAllReservations)
 		router.Get("/reservations-calender", handlers.Repo.AdminReservationsCalender)
 
-		router.Get("/reservations/{src}/{id}", handlers.Repo.AdminShowReservation) //refers to the source and ID(/admin/reservations-new/src/id) of the new reservaton and all reservation page
+		router.Get("/reservations/{src}/{id}", handlers.Repo.AdminShowReservation)      //refers to the source and ID(/admin/reservations-new/src/id) of the new reservaton and all reservation page
+		router.Post("/reservations/{src}/{id}", handlers.Repo.AdminPostShowReservation) //refers to the source and ID(/admin/reservations-new/src/id) of the new reservaton and all reservation page
 
 	})
 	return router
