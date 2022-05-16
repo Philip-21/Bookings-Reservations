@@ -1,0 +1,23 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Choose a Room</h1>
+   <!--range through whatever rooms are available-->
+                {{$rooms := index .Data "rooms"}}  <!--index.Data gets the template(Data) from templaste.go-->
+
+                <ul>
+                    {{range $rooms}}
+                        <li><a href="/choose-room/{{.ID}}">{{.RoomName}}</a></li>    <!--generate the link ofthe available roomss-->
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+
+<!--declaring a variable,storing the value of the empty reservation the first time the page is displayed in $res -->
+                <!--Data is from the templatedata.go-->

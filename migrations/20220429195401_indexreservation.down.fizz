@@ -1,0 +1,3 @@
+
+drop_index("reservation", "reservation_email_idx")
+drop_index("reservation", "reservation_last_name_idx")
