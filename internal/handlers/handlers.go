@@ -17,6 +17,7 @@ import (
 	"github.com/Philip-21/bookings/internal/render"
 	"github.com/Philip-21/bookings/internal/repository"
 	"github.com/Philip-21/bookings/internal/repository/dbrepo"
+	"github.com/go-chi/chi"
 )
 
 //always start a go function with a block letter so that it can be easily imported into anther directory e.g 	renders.Template(w, "home.page.html")
@@ -573,8 +574,8 @@ func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request
 	})
 }
 
+//saves an edited reservation
 func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Request) {
-
 	err := r.ParseForm()
 	if err != nil {
 		helpers.ServerError(w, err)
@@ -606,13 +607,30 @@ func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Req
 	res.Email = r.Form.Get("email")
 	res.Phone = r.Form.Get("phone")
 
-	//update the database
+	//update the database after changes are made
 	err = m.DB.UpdateReservation(res)
 	if err != nil {
 		helpers.ServerError(w, err)
 		return
 	}
-	m.App.Session.Put(r.Context(), "flash", "changes saved")
-	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+	m.App.Session.Put(r.Context(), "flash", "Changes Saved")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations/%s", src), http.StatusSeeOther)
+}
 
+//marks  a reservation as processed
+func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	src := chi.URLParam(r, "src")
+	_ = m.DB.UpdateProcessedForReservation(id, 1)
+	m.App.Session.Put(r.Context(), "flash", "Reservation marked as processed")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+}
+
+//deletes a Reservation
+func (m *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	src := chi.URLParam(r, "src")
+	_ = m.DB.DeleteReservation(id)
+	m.App.Session.Put(r.Context(), "flash", "Reservation Deleted")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations/%s", src), http.StatusSeeOther)
 }

@@ -393,7 +393,7 @@ func (m *postgresDBRepo) UpdateReservation(u models.Reservation) error {
 	defer cancel()
 
 	query := `
-	update reservations set first_name=$1, last_name=$2, email=$3, phone=$4, updated_at=$5
+	update reservation set first_name=$1, last_name=$2, email=$3, phone=$4, updated_at=$5
 	where id=$6
 	`
 	_, err := m.DB.ExecContext(ctx, query,
@@ -415,7 +415,7 @@ func (m *postgresDBRepo) DeleteReservation(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `delete from reservations where id=$1
+	query := `delete from reservation where id=$1
 	`
 	_, err := m.DB.ExecContext(ctx, query, id)
 	if err != nil {
@@ -430,7 +430,7 @@ func (m *postgresDBRepo) UpdateProcessedForReservation(id, processed int) error 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `update reservations set processed =$1 where id= $2
+	query := `update reservation set processed =$1 where id= $2
 	`
 	_, err := m.DB.ExecContext(ctx, query, id)
 	if err != nil {

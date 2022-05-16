@@ -14,6 +14,7 @@
         <!-- plugin css for this page -->
         <!-- End plugin css for this page -->
         <!-- inject:css -->
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
         <link rel="stylesheet" href="/static/admin/css/style.css">
         <!-- endinject -->
         <link rel="shortcut icon" href="/static/admin/images/favicon.png"/>
@@ -136,9 +137,52 @@
     <script src="/static/admin/js/todolist.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
+    <script src="https://unpkg.com/notie"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="/static/js/app.js"></script>
     <script src="/static/admin/js/dashboard.js"></script>
     <!-- End custom js for this page-->
 
+    <script>
+        let attention = Prompt();
+       //gives the notification 
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                let forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+        function notify(msg, msgType) {
+            notie.alert({
+                type: msgType,
+                text: msg,
+            })
+        }
+
+        function notifyModal(title, text, icon, confirmationButtonText) {
+            Swal.fire({
+                title: title,
+                html: text,
+                icon: icon,
+                confirmButtonText: confirmationButtonText
+            })
+        }
+
+    </script>
+    
+      </script>    
+      
     {{block "js" . }}
 
     {{end}}
