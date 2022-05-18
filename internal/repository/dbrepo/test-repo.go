@@ -143,3 +143,13 @@ func (m *testDBRepo) DeleteReservation(id int) error {
 func (m *testDBRepo) UpdateProcessedForReservation(id, processed int) error {
 	return nil
 }
+
+func (m *testDBRepo) AllRooms() ([]models.Room, error) {
+	var rm []models.Room
+	return rm, nil
+}
+
+func (m *testDBRepo) GetRestrictionsForRoomsByDate(roomID int, start, end time.Time) ([]models.RoomRestriction, error) {
+	var restriction []models.RoomRestriction
+	return restriction, nil
+}

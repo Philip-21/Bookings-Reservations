@@ -17,12 +17,35 @@ import (
 
 //allows us specify certain functions available to golang template
 var functions = template.FuncMap{
-	"humanDate": HumanDate,
+	"humanDate":  HumanDate,
+	"formatDate": FormatDate,
+	"iterate":    Iterate,
+	"add":        Add,
 }
 
 //returns time in YYYY-MM-DD format in the templates
 func HumanDate(t time.Time) string {
 	return t.Format("2006-01-02")
+}
+
+func FormatDate(t time.Time, f string) string {
+	return t.Format(f)
+}
+
+//adding 2 int tohether
+func Add(a, b int) int {
+	return a + b
+}
+
+//this func allows us to iterate within 2 days
+//iterate returns a slice of int , starting at 1,going to count
+func Iterate(count int) []int {
+	var i int
+	var items []int
+	for i = 0; i < count; i++ {
+		items = append(items, i)
+	}
+	return items
 }
 
 var app *config.AppConfig

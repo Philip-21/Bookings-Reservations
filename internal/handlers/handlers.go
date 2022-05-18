@@ -539,7 +539,103 @@ func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request
 
 //shows  reservation calender in Admin section
 func (m *Repository) AdminReservationsCalender(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "admin-reservations-calender.page.html", &models.TemplateData{})
+	//assume there is no month or year specified
+	now := time.Now()
+	//specifying the month and year
+	if r.URL.Query().Get("y") != "" {
+		year, _ := strconv.Atoi(r.URL.Query().Get("y"))
+		month, _ := strconv.Atoi(r.URL.Query().Get("m"))
+		now = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	}
+
+	data := make(map[string]interface{})
+	data["now"] = now
+
+	next := now.AddDate(0, 1, 0) //date format for next month(y,m,d)
+	last := now.AddDate(0, -1, 0)
+
+	nextMonth := next.Format("01")
+	nextMonthYear := next.Format("2006")
+
+	lastMonth := last.Format("01")
+	lastMonthYear := last.Format("2006")
+
+	//putting in a string map
+	stringMap := make(map[string]string)
+	stringMap["next_month"] = nextMonth
+	stringMap["next_month_year"] = nextMonthYear
+	stringMap["last_month"] = lastMonth
+	stringMap["last_month_year"] = lastMonthYear
+
+	//current month and year Format
+	stringMap["this_month"] = now.Format("02")
+	stringMap["this_month_year"] = now.Format("2006")
+
+	//getting the no of days and putting in a map
+	//getting first and last days of the month
+	currentYear, currentMonth, _ := now.Date()
+	currentLocation := now.Location()
+	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
+	lastOfMonth := firstOfMonth.AddDate(0, 1, -1)
+	intMap := make(map[string]int)
+	intMap["days_in_month"] = lastOfMonth.Day()
+
+	//getting the rooms
+	rooms, err := m.DB.AllRooms()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	data["rooms"] = rooms
+
+	//storing information about  the reservation and block from the calender in a data structure to be used in the template
+	//range through the rooms variable
+	for _, x := range rooms {
+		//create maps
+		reservationMap := make(map[string]int)
+		blockMap := make(map[string]int)
+
+		//making sure there's one entry for every single day in the current month
+		for d := firstOfMonth; d.After(lastOfMonth) == false; d = d.AddDate(0, 0, 1) {
+			//reservation map for current day
+			reservationMap[d.Format("2006-01-02")] = 0 //0 means room is available
+			blockMap[d.Format("2006-01-02")] = 0
+		}
+
+		///get all restrictions for the current room
+		restrictions, err := m.DB.GetRestrictionsForRoomsByDate(x.ID, firstOfMonth, lastOfMonth)
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+		//if its a reservation we'll put the proper entry in the reservationMap likewise a block
+		for _, y := range restrictions {
+			if y.ReservationID > 0 {
+				//its a reservation
+				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
+					//has an entry to the date and reservationID which builds a link to the reservation
+					reservationMap[d.Format("2006-01-02")] = y.ReservationID
+				}
+			} else {
+				//its a block on the calender
+				blockMap[y.StartDate.Format("2006-01-02")] = y.RestrictionID
+			}
+		}
+		//gives a reservation or block map for every room
+		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
+		data[fmt.Sprintf("reservation_map_%d", x.ID)] = blockMap
+
+		//storing the blockMap in the session,
+		//this shows the blocks we are getting rid of and which ones are  new
+		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
+
+	}
+
+	render.Template(w, r, "admin-reservations-calender.page.html", &models.TemplateData{
+		StringMap: stringMap,
+		Data:      data,
+		IntMap:    intMap,
+	})
 }
 
 //shows a reservation  in the each of the reservation section
