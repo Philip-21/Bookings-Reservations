@@ -612,18 +612,19 @@ func (m *Repository) AdminReservationsCalender(w http.ResponseWriter, r *http.Re
 		for _, y := range restrictions {
 			if y.ReservationID > 0 {
 				//its a reservation
+				//loop through and put an entry for each of the dates
 				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
 					//has an entry to the date and reservationID which builds a link to the reservation
 					reservationMap[d.Format("2006-01-02")] = y.ReservationID
 				}
 			} else {
 				//its a block on the calender
-				blockMap[y.StartDate.Format("2006-01-02")] = y.RestrictionID
+				blockMap[y.StartDate.Format("2006-01-02")] = y.ID
 			}
 		}
 		//gives a reservation or block map for every room
 		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
-		data[fmt.Sprintf("reservation_map_%d", x.ID)] = blockMap
+		data[fmt.Sprintf("block_map_%d", x.ID)] = blockMap
 
 		//storing the blockMap in the session,
 		//this shows the blocks we are getting rid of and which ones are  new
@@ -636,6 +637,22 @@ func (m *Repository) AdminReservationsCalender(w http.ResponseWriter, r *http.Re
 		Data:      data,
 		IntMap:    intMap,
 	})
+}
+
+//makes reservation changes from the reservation calender(post request)
+func (m *Repository) AdminPostReservationsCalender(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	year, _ := strconv.Atoi(r.Form.Get("y"))
+	month, _ := strconv.Atoi(r.Form.Get("m"))
+
+	//process blocks handles the logic to process blocks for things checked and unchecked
+
+	m.App.Session.Put(r.Context(), "flash", "changes saved")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calender?y=%d&m=%d", year, month), http.StatusSeeOther)
 }
 
 //shows a reservation  in the each of the reservation section
@@ -710,7 +727,7 @@ func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Req
 		return
 	}
 	m.App.Session.Put(r.Context(), "flash", "Changes Saved")
-	http.Redirect(w, r, fmt.Sprintf("/admin/reservations/%s", src), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 }
 
 //marks  a reservation as processed
@@ -728,5 +745,5 @@ func (m *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Reque
 	src := chi.URLParam(r, "src")
 	_ = m.DB.DeleteReservation(id)
 	m.App.Session.Put(r.Context(), "flash", "Reservation Deleted")
-	http.Redirect(w, r, fmt.Sprintf("/admin/reservations/%s", src), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 }

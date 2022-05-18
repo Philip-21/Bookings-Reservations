@@ -480,7 +480,7 @@ func (m *postgresDBRepo) GetRestrictionsForRoomsByDate(roomID int, start, end ti
 
 	var restrictions []models.RoomRestriction
 	query := `
-	    select_id, coalesce(reservation_id, 0), restriction_id, room_id, start_date, end_date
+	    select id, coalesce(reservation_id, 0), restriction_id, room_id, start_date, end_date
 		from room_restrictions where $1 < end_date and $2 >= start_date
 		and room_id = $3
 		`

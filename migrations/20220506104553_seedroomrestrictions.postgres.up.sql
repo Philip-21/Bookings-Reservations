@@ -1,2 +1,0 @@
-INSERT INTO public.room_restrictions (start_date,end_date,room_id,restriction_id,reservation_id,created_at,updated_at) VALUES
-	 ('2022-05-06','2022-05-07',1,1,2,'2022-05-06 00:00:00.000','2022-05-06 00:00:00.000');

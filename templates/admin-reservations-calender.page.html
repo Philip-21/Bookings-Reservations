@@ -30,21 +30,29 @@
 
                   </div>
 
+           <!--handling Calender changes -->       
+              <div class="clearfix"></div>
+              <form method="post" action="/admin/reservations-calender">
+                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                 <!--return the current month and year previously viewed-->
+                 <input type="hidden" name="m" value="{{index .StringMap "this_month"}}">
+                 <input type="hidden" name="y" value="{{index .StringMap "this_month_year"}}">
 
-
-                 <div class="clearfix"></div>
-                   
+                  
                   {{range $rooms}}
                       {{$roomID := .ID}}
+                      <!--pulling the reservations and blocks out of the data vaiable(Data template) -->
+                      {{$blocks := index $.Data (printf "block_map_%d" .ID)}} <!--$ gets the value outside the loop because DATA doesnt belong to the range-->
+                      {{$reservations := index $.Data (printf "reservation_map_%d" .ID)}}
 
-                 <h4 class="mt-4">{{.RoomName}}</h4>
+                 <h6 class="mt-4">{{.RoomName}}</h6>
                     <!--creating a Room table putting it in a div class to make it mobile friendly-->
                     <div class="table-response">
                         <table class="table table-bordered table-sm">
-                           
-                            <tr class="table-dark">
+                            
+                          <tr class="table-dark">
                                {{range $index := iterate $dim}} <!--iteate over days in a month-->    
-                                   <!--First Row-->
+                                   <!--First Row which deals with the days of the months -->
                                     <td class="text-center">   
                                        {{add $index 1}} <!--adds 1 to every day of the month-->
                                    </td>
@@ -53,12 +61,37 @@
 
                             <tr>
                                 {{range $index := iterate $dim}} 
-                                    <!--second row-->
+                                    <!--second row which deals with the box ticks-->
                                   <td class="text-center">  
-                                     <input type="checkbox">
+                                      <!--if theres no reservation display a block with an empty check mark else if theres a reservation, create what links to the actual  reservation -->
+                                    {{if gt (index $reservations  (printf "%s-%s-%d" $curYear $curMonth (add $index 1))) 0 }}
+                                        <a href="/admin/reservations/cal/{{index $reservations  (printf "%s-%s-%d" $curYear $curMonth (add $index 1))}}">
+                                          <span class="text-danger">R</span> <!--shows an R for everday the reservation is made-->
+                                        </a>
+                                    {{else}}
+                                    <!--if the entry is >0 display a check mark -->
+                                      <input                  
+                                        {{if gt (index $blocks (printf "%s-%s-%d" $curYear $curMonth (add $index 1))) 0 }}
+                                           checked
+                                           name="remove_block_{{$roomID}}_{{printf "%s-%s-%d" $curYear $curMonth (add $index 1)}}"
+                                           value="{{index $blocks (printf "%s-%s-%d" $curYear $curMonth (add $index 1))}}" 
+                                         {{else}}
+                                               name="add_block_{{$roomID}}_{{printf "%s-%s-%d" $curYear $curMonth (add $index 1)}}"
+                                               value="1"
+                                         {{end}}    
+                                              type="checkbox">
+                                        {{end}}   
                                    </td> 
                                 {{end}} 
                              </tr>
                         </table> 
-                    </div>                      
-   {{end}}
+                    </div>  
+
+                  {{end}}
+                  <hr>
+                  <input type="submit" class="btn btn-primary" value="Save Changes">
+
+                  
+              </form>     
+         </div>  
+    {{end}}
