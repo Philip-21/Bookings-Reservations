@@ -19,7 +19,13 @@
                <!--Hidden fields in the form-->
                <form action="/admin/reservations/{{$src}}/{{$res.ID}}" method="post" class="" novalidate>
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-              
+                <input type="hidden" name="year" value="{{index .StringMap "year"}}">
+                <input type="hidden" name="month" value="{{index .StringMap "month"}}">
+
+
+
+
+
                 <div class="form-group mt-3">
                     <label for="first_name">First Name:</label>
                     {{with .Form.Errors.Get "first_name"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
@@ -67,12 +73,15 @@
                         <a href="#!" onclick="window.history.go(-1)" class="btn btn-warning">Cancel</a>                        <!-- the cancel button takes us to the previous page in browser history-->
                    {{else}}
                       <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
-                   {{end }}  
-                  <!-- <a href="#!" class="btn btn-info" onclick="processRes({$res:ID})">Mark as Processed</a> -->
-                  <input type="submit" class="btn btn-info" value="Mark as Processed"  onclick="processRes({$res:ID})">
-             </div>
+                   {{end}}  
+                   {{if eq $res.Processed 0}}
+                      <!-- <a href="#!" class="btn btn-info" onclick="processRes({$res:ID})">Mark as Processed</a>-->
+                     <input type="submit" class="btn btn-info" value="Mark as Processed"  onclick="processRes({$res:ID})"> 
+               {{end}}
+            </div>
+
              <!-- <a href="#delete" class="btn btn-danger" onclick="deleteRes({$res:ID})">Delete</a> -->
-                    <div class="float-right">
+                   <div class="float-right">
                      <input type="submit" class="btn btn-danger" value="Delete" onclick="deleteRes({$res:ID})">
              </div>
              <div class="clearfix"></div>
@@ -89,11 +98,28 @@
               msg: 'Are you Sure?',
              callback: function (result){
                   if (result !==false){
-                      window.location.href="/admin/process-reservations/{{$src}}/" + id;
+                      window.location.href="/admin/process-reservations/{{$src}}/do"
+                      + id
+                      + "/do?y={{index .StringMap }}&m={{index .StringMap}}";
                  }
               }
 
           })
         }
+        function deleteRes(id) {
+          attention.custom({
+             icon: 'warning',
+              msg: 'Are you Sure?',
+             callback: function (result){
+                  if (result !==false){
+                      window.location.href="/admin/delete-reservations/{{$src}}/"
+                       + id
+                       + "/do?y={{index .StringMap }}&m={{index .StringMap }}";
+                 }
+              }
+
+          })
+        }
+      
   </script>
  {{end}}   
