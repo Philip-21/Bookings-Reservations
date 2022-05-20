@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/gob"
+
 	"fmt"
 	"log"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/Philip-21/bookings/internal/render"
 	"github.com/alexedwards/scs/v2"
+	"github.com/spf13/viper"
 )
 
 const portNumber = ":8080"
@@ -64,13 +66,52 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Restriction{})
 	gob.Register(map[string]int{})
 
+	viper.SetConfigName("app")
+	viper.AddConfigPath(".")
+	viper.SetConfigType("env")
+	viper.AutomaticEnv()
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Printf("Error reading config file, %s ", err)
+	}
+
+	dbHost, ok := viper.Get("DB_host").(string)
+	dbPort, ok := viper.Get("DB_port").(string)
+	dbUser, ok := viper.Get("DB_user").(string)
+	dbPassword, ok := viper.Get("DB_password").(string)
+	dbdatabase, ok := viper.Get("DB_name").(string)
+
+	if !ok {
+		log.Fatalf("Invalid type assertion")
+	}
+	fmt.Printf("viper : %s = %s\n", "host", dbHost)
+	fmt.Printf("viper : %s = %s\n", "port", dbPort)
+	fmt.Printf("viper : %s = %s\n", "dbname", dbdatabase)
+	fmt.Printf("viper : %s = %s\n", "user", dbUser)
+	fmt.Printf("viper : %s = %s\n", "password", dbPassword)
+
+	// connect to database
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSQL("host=%s  port= %s dbname=%s user=%s password= %s ")
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying.....")
+	}
+	log.Println("Connected to database!")
+
+	tc, err := render.CreateTemplateCache() //new templates which are stored in the createtemplatecache are defined as tc
+	if err != nil {
+		log.Fatal("cannot create template cache")
+		return nil, err
+	}
+
 	//create a channel that will be avilable to all parts of the application
 	mailChan := make(chan models.MailData)
 	app.MailChan = mailChan
 
 	// change this to true when in production
 	app.InProduction = false
-
+	app.UseCache = false
 	//setting up a logger to write to the terminal,helps in writing the client and server errors
 	//info log
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -90,22 +131,7 @@ func run() (*driver.DB, error) {
 	//defined for handlers to have access to
 	app.Session = session
 
-	// connect to database
-	log.Println("Connecting to database...")
-	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=postgres user=postgres password=philippians")
-	if err != nil {
-		log.Fatal("Cannot connect to database! Dying...")
-	}
-	log.Println("Connected to database!")
-
-	tc, err := render.CreateTemplateCache() //new templates which are stored in the createtemplatecache are defined as tc
-	if err != nil {
-		log.Fatal("cannot create template cache")
-		return nil, err
-	}
-
 	app.TemplateCache = tc //defining the app as tc which stores template cache
-	app.UseCache = false
 
 	//application configurations
 	repo := handlers.NewRepo(&app, db) //new repository and database configuration
