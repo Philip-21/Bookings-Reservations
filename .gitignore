@@ -1,9 +1,7 @@
 .idea
-coverage.out
-.DS_Store
 *.code-workspace
 database.yml
 schema.sql
-.app.env
-.admin
-.converge.out
+bookings/app.env
+static/admin
+
