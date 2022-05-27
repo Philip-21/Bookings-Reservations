@@ -2,6 +2,6 @@
 *.code-workspace
 database.yml
 schema.sql
-bookings/app.env
-static/admin
+.env
+
 

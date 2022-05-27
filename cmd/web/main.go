@@ -66,7 +66,7 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Restriction{})
 	gob.Register(map[string]int{})
 
-	viper.SetConfigName("app")
+	viper.SetConfigName("")
 	viper.AddConfigPath(".")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
