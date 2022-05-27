@@ -6,6 +6,8 @@ import (
 	"github.com/Philip-21/bookings/internal/models"
 )
 
+//m *postgresDBRepo is the struct that implments the DatabaseRepo(interface) because it implements the functions in the interface by acting as its reveiver
+
 //Repository helps to swap contents of the application with a minimal changes requiredin the code base
 type DatabaseRepo interface {
 	AllUsers() bool
