@@ -65,8 +65,7 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Room{})
 	gob.Register(models.Restriction{})
 	gob.Register(map[string]int{})
-
-	viper.SetConfigName("")
+	viper.SetConfigName("app")
 	viper.AddConfigPath(".")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
@@ -93,7 +92,7 @@ func run() (*driver.DB, error) {
 
 	// connect to database
 	log.Println("Connecting to database...")
-	db, err := driver.ConnectSQL("host=%s  port= %s dbname=%s user=%s password= %s ")
+	db, err := driver.ConnectSQL("host=%s   port=%s dbname=%s  user=%s  password=%s")
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying.....")
 	}
