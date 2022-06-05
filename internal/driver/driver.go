@@ -4,8 +4,10 @@ package driver
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
+	"github.com/Philip-21/bookings/internal/config"
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -24,7 +26,11 @@ const maxIdleDbConn = 5  //connections that remain idle in the db pool
 const maxDbLifetime = 5 * time.Minute
 
 // ConnectSQL creates database pool for Postgres
-func ConnectSQL(dsn string) (*DB, error) {
+func ConnectSQL(connect *config.Envconfig) (*DB, error) {
+	dsn := fmt.Sprintf(
+		"host=%s port=%s dbname=%s user=%s  password=%s sslmode=%s",
+		connect.Host, connect.Port, connect.DBName, connect.User, connect.Password, connect.SSLMode,
+	)
 	d, err := NewDatabase(dsn)
 	if err != nil {
 		panic(err)

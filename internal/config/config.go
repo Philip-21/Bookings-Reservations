@@ -6,6 +6,7 @@ import (
 
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/alexedwards/scs/v2"
+	"github.com/spf13/viper"
 )
 
 //configuration file will be accessed and imported into other parts of the application
@@ -21,4 +22,31 @@ type AppConfig struct {
 	InProduction  bool
 	Session       *scs.SessionManager
 	MailChan      chan models.MailData //create a channel that will be avilable to all parts of the application
+}
+
+type Envconfig struct {
+	Host     string `mapstructure:"DB_host"`
+	Port     string `mapstructure:"DB_port"`
+	Password string `mapstructure:"DB_password"`
+	User     string `mapstructure:"DB_user"`
+	DBName   string `mapstructure:"DB_name"`
+	SSLMode  string `mapstructure:"DB_sslmode"`
+}
+
+//conf variable will be accesed by other files and packages within the app
+var Conf *Envconfig
+
+// LoadConfig reads configuration from file or environment variables.
+func LoadConfig() {
+	viper.AddConfigPath(".")
+	viper.SetConfigFile("app.env")
+	viper.SetConfigType("env")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = viper.Unmarshal(&Conf)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
