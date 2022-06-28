@@ -15,7 +15,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	router.Use(middleware.Recoverer) // middleware.Recoverer absorb panics and prints the stack trace,panic occurs when a program cannot function
 	router.Use(NoSurf)               //Nosurf adds CSRF protection to POST request
-	router.Use(SessionLoad)
+	router.Use(SessionLoad)          // SessionLoad loads and saves the session on every request
 
 	//----------------------------------get request-----------------------------//
 	router.Get("/user/login", handlers.Repo.ShowLogin)

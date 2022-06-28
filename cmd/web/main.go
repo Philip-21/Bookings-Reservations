@@ -90,11 +90,10 @@ func run() (*driver.DB, error) {
 	//setting up a logger to write to the terminal,helps in writing the client and server errors
 	//info log
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	//making it part of the app
-	app.InfoLog = infoLog
-
 	//error log
 	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	//making it part of the app
+	app.InfoLog = infoLog
 	app.ErrorLog = errorLog
 
 	session = scs.New()
