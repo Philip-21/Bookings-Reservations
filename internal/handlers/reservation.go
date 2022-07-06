@@ -195,6 +195,22 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
+///--------------------Authentication-------------------////////
+
+//shows new reservations in Admin section
+func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
+	newres, err := m.DB.AllNewReservations()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	data := make(map[string]interface{})
+	data["reservation"] = newres
+	render.Template(w, r, "admin-new-reservations.page.html", &models.TemplateData{
+		Data: data,
+	})
+}
+
 //shows all reservations in Admin section
 func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
 	res, err := m.DB.AllReservations()
