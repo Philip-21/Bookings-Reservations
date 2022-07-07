@@ -173,7 +173,7 @@ func (m *postgresDBRepo) GetRoomByID(id int) (models.Room, error) {
 	return room, nil
 }
 
-//
+////------------USERS--------------
 func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -221,7 +221,38 @@ func (m *postgresDBRepo) UpdateUser(u models.User) error {
 	return nil
 }
 
+//create  user
+func (m *postgresDBRepo) CreateUser(user models.Register) error {
+	//using context to terminate a transaction e.g when a connection is lost fromthe user,or the user might close the page or browser
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+	INSERT INTO users (email, password, created_at, updated_at)
+	values
+	($1, $2, $3, $4)
+	`
+	row := m.DB.QueryRowContext(ctx, query,
+		user.Email,
+		user.Password,
+		time.Now(),
+		time.Now(),
+	)
+	err := row.Scan(
+		&user.Email,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
 //authenticate a user
+
 func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

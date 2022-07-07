@@ -1,16 +1,50 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/Philip-21/bookings/internal/forms"
+	"github.com/Philip-21/bookings/internal/helpers"
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/Philip-21/bookings/internal/render"
+	"golang.org/x/crypto/bcrypt"
 )
 
 ///////----------------------Aut
-// func (m *Repository) Signup(w http.ResponseWriter, r *http.Request)
+type Sign struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (m *Repository) Signup(w http.ResponseWriter, r *http.Request) {
+
+	var cred Sign
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
+	credentials := &models.Register{
+		Email:    cred.Email,
+		Password: string(hashedPassword),
+	}
+	err := json.NewDecoder(r.Body).Decode(&cred)
+	if err != nil {
+		// If there is something wrong with the request body, return a 400 status
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	err = m.DB.CreateUser(*credentials)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "cant fill sinup credentials!")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+}
 
 //shows login screen
 func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
