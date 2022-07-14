@@ -18,28 +18,43 @@ type Sign struct {
 	Password string `json:"password"`
 }
 
-func (m *Repository) Signup(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "signup.page.html", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	var cred Sign
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
-	credentials := &models.Register{
-		Email:    cred.Email,
-		Password: string(hashedPassword),
-	}
-	err := json.NewDecoder(r.Body).Decode(&cred)
-	if err != nil {
-		// If there is something wrong with the request body, return a 400 status
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	err = r.ParseForm()
+	err := r.ParseForm()
 	if err != nil {
 		helpers.ServerError(w, err)
 		return
 	}
+	credentials := &models.Register{
+		Email:    r.Form.Get(cred.Email),
+		Password: r.Form.Get(string(hashedPassword)),
+	}
+	Regform := forms.New(r.PostForm)
+	Regform.Required(cred.Email, string(hashedPassword))
+	Regform.IsEmail(cred.Email)
+	if !Regform.Valid() {
+		resp := jsonResponse{
+			Message: "invalid credentials",
+		}
+		//applies Indent to format the output
+		out, _ := json.MarshalIndent(resp, "", "   ")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
+		return
+		//render.Template(w, r, "home.page.html", &models.TemplateData{})
+
+	}
 	err = m.DB.CreateUser(*credentials)
 	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "cant fill sinup credentials!")
+		m.App.Session.Put(r.Context(), "error", "cant fill sigup credentials!")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}

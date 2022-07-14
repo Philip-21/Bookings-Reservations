@@ -17,30 +17,27 @@ func routes(app *config.AppConfig) http.Handler {
 	router.Use(NoSurf)               //Nosurf adds CSRF protection to POST request
 	router.Use(SessionLoad)          // SessionLoad loads and saves the session on every request
 
-	//----------------------------------get request-----------------------------//
-	router.Get("/user/login", handlers.Repo.ShowLogin)
 	router.Get("/", handlers.Repo.Home)
 	router.Get("/about", handlers.Repo.About)
+
+	//----------------------------------Authorization Requests-----------------------------//
+	router.Get("/user/signup", handlers.Repo.DisplaySignUp)
+	router.Get("/user/login", handlers.Repo.ShowLogin)
+	router.Get("/user/logout", handlers.Repo.Logout)
+	router.Post("/user/login", handlers.Repo.PostShowLogin)
+	router.Post("/user/signup", handlers.Repo.SignUp)
 
 	//rooms
 	router.Get("/generals-quarters", handlers.Repo.Generals)
 	router.Get("/majors-suite", handlers.Repo.Majors)
 
-	//reservations and information
+	//------reservations and information
 	router.Get("/search-availability", handlers.Repo.Availability)
 	router.Get("/choose-room/{id}", handlers.Repo.ChooseRoom)
 	router.Get("/book-room", handlers.Repo.BookRoom)
 	router.Get("/contact", handlers.Repo.Contact)
 	router.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 	router.Get("/make-reservation", handlers.Repo.Reservation)
-
-	router.Get("/user/logout", handlers.Repo.Logout)
-
-	//----------------------------post request-------------------------------------------------------//
-
-	router.Post("/user/login", handlers.Repo.PostShowLogin)
-
-	//reservations and information
 	router.Post("/search-availability", handlers.Repo.PostAvailability)
 	router.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
 	router.Post("/make-reservation", handlers.Repo.PostReservation)
