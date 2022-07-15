@@ -78,22 +78,13 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-//json response for availability
-type jsonResponse struct {
-	OK        bool   `json:"ok"`
-	Message   string `json:"message"`
-	RoomID    string `json:"room_id"`
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
-}
-
 // AvailabilityJSON handles request for availability and send JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	// need to parse request body
 	err := r.ParseForm()
 	if err != nil {
 		// can't parse form, so return appropriate json
-		resp := jsonResponse{
+		resp := jsonAvailability{
 			OK:      false,
 			Message: "Internal server error",
 		}
@@ -116,17 +107,17 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	available, err := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
 	if err != nil {
 		// got a database error, so return appropriate json
-		resp := jsonResponse{
+		resp := jsonAvailability{
 			OK:      false,
 			Message: "Error querying database",
 		}
-
+		//applies Indent to format the output
 		out, _ := json.MarshalIndent(resp, "", "     ")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(out)
 		return
 	}
-	resp := jsonResponse{
+	resp := jsonAvailability{
 		OK:        available,
 		Message:   "",
 		StartDate: sd,

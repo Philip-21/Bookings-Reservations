@@ -6,17 +6,11 @@ import (
 	"net/http"
 
 	"github.com/Philip-21/bookings/internal/forms"
-	"github.com/Philip-21/bookings/internal/helpers"
+
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/Philip-21/bookings/internal/render"
 	"golang.org/x/crypto/bcrypt"
 )
-
-///////----------------------Aut
-type Sign struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
 
 func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "signup.page.html", &models.TemplateData{
@@ -25,40 +19,41 @@ func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
-
-	var cred Sign
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
+	//preventing session fixation attack by renewing the token
+	_ = m.App.Session.RenewToken(r.Context())
 	err := r.ParseForm()
 	if err != nil {
-		helpers.ServerError(w, err)
-		return
+		log.Println(err)
 	}
-	credentials := &models.Register{
-		Email:    r.Form.Get(cred.Email),
-		Password: r.Form.Get(string(hashedPassword)),
-	}
-	Regform := forms.New(r.PostForm)
-	Regform.Required(cred.Email, string(hashedPassword))
-	Regform.IsEmail(cred.Email)
-	if !Regform.Valid() {
-		resp := jsonResponse{
+
+	firstname := r.Form.Get("firstname")
+	lastname := r.Form.Get("lastname")
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+
+	form := forms.New(r.PostForm)
+	form.Required("email", "password") //must be filled shows field cant be blank
+	form.IsEmail("email")
+	if !form.Valid() {
+		resp := jsonAuthorization{
 			Message: "invalid credentials",
 		}
-		//applies Indent to format the output
-		out, _ := json.MarshalIndent(resp, "", "   ")
+		out, _ := json.Marshal(resp)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(out)
 		return
-		//render.Template(w, r, "home.page.html", &models.TemplateData{})
-
 	}
-	err = m.DB.CreateUser(*credentials)
+	err = m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
+
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "cant fill sigup credentials!")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
+		http.Redirect(w, r, "user/signup", http.StatusTemporaryRedirect)
 	}
-
+	m.App.Session.Put(r.Context(), "email", email)
+	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
+	//http redirect which directs to another page after the user fills a form,to prevent filling the form 2wice
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 //shows login screen

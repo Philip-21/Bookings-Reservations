@@ -68,10 +68,3 @@ type MailData struct {
 	Subject string
 	Content string
 }
-
-type Register struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}

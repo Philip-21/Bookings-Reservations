@@ -222,33 +222,26 @@ func (m *postgresDBRepo) UpdateUser(u models.User) error {
 }
 
 //create  user
-func (m *postgresDBRepo) CreateUser(user models.Register) error {
-	//using context to terminate a transaction e.g when a connection is lost fromthe user,or the user might close the page or browser
+
+func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email string, password string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	query := `
-	INSERT INTO users (email, password, created_at, updated_at)
+	INSERT INTO users (first_name, last_name, email, password, created_at, updated_at)
 	values
-	($1, $2, $3, $4)
+	($1, $2, $3, $4, $5, $6)
 	`
+
 	row := m.DB.QueryRowContext(ctx, query,
-		user.Email,
-		user.Password,
-		time.Now(),
-		time.Now(),
-	)
+		firstname, lastname, email, password, time.Now(), time.Now())
 	err := row.Scan(
-		&user.Email,
-		&user.Password,
-		&user.CreatedAt,
-		&user.UpdatedAt,
+		&email, &password,
 	)
 	if err != nil {
 		return err
 	}
 	return nil
-
 }
 
 //authenticate a user

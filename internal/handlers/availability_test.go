@@ -70,7 +70,7 @@ func TestAvailabilityJSON(t *testing.T) {
 		handler := http.HandlerFunc(Repo.AvailabilityJSON)
 		handler.ServeHTTP(rr, req)
 
-		var j jsonResponse
+		var j jsonAvailability
 		err := json.Unmarshal([]byte(rr.Body.String()), &j)
 		if err != nil {
 			t.Error("failed to parse json!")

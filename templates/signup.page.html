@@ -1,3 +1,4 @@
+
 {{template "base" .}}
 
 {{define "content"}}
@@ -8,6 +9,27 @@
 
             <form method="post" action="/user/signup" novalidate>
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <div class="form-group mt-3">
+                    <label for="firstname">FirstName:</label>
+                    {{with .Form.Errors.Get "firstname"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
+                        <label class="text-danger">{{.}}</label>
+                    {{end}}
+                    <input class="form-control {{with .Form.Errors.Get "firstname"}} is-invalid {{end}}"
+                           id="firstname" autocomplete="off" type='firstname'
+                           name='firstname' value="" required>
+                </div>
+
+            
+                <div class="form-group mt-3">
+                    <label for="lastname">LastName:</label>
+                    {{with .Form.Errors.Get "lastname"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
+                        <label class="text-danger">{{.}}</label>
+                    {{end}}
+                    <input class="form-control {{with .Form.Errors.Get "lastname"}} is-invalid {{end}}"
+                           id="lastname" autocomplete="off" type='lastname'
+                           name='lastname' value="" required>
+                </div>
+
                 <div class="form-group mt-3">
                     <label for="email">Email:</label>
                     {{with .Form.Errors.Get "email"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
@@ -36,3 +58,4 @@
       </div>
 </div>
 {{end}}
+
