@@ -31,7 +31,7 @@ func routes(app *config.AppConfig) http.Handler {
 	router.Get("/generals-quarters", handlers.Repo.Generals)
 	router.Get("/majors-suite", handlers.Repo.Majors)
 
-	//------reservations and information
+	//------reservations and information----------------//
 	router.Get("/search-availability", handlers.Repo.Availability)
 	router.Get("/choose-room/{id}", handlers.Repo.ChooseRoom)
 	router.Get("/book-room", handlers.Repo.BookRoom)
