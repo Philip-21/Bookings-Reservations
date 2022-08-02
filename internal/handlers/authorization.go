@@ -21,6 +21,7 @@ func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	//preventing session fixation attack by renewing the token
 	_ = m.App.Session.RenewToken(r.Context())
+	//_= m.App.Session.Cookie(r)
 	err := r.ParseForm()
 	if err != nil {
 		log.Println(err)
@@ -44,13 +45,17 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 		w.Write(out)
 		return
 	}
+
 	err = m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
 
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "cant fill sigup credentials!")
 		http.Redirect(w, r, "user/signup", http.StatusTemporaryRedirect)
 	}
+	m.App.Session.Put(r.Context(), "firstname", firstname)
+	m.App.Session.Put(r.Context(), "lastname", lastname)
 	m.App.Session.Put(r.Context(), "email", email)
+	m.App.Session.Put(r.Context(), "password", password)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
 	//http redirect which directs to another page after the user fills a form,to prevent filling the form 2wice
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -102,7 +107,7 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	//renew sesion token
 	_ = m.App.Session.RenewToken(r.Context())
 	//redirects to the login page
-	http.Redirect(w, r, "user/login", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
