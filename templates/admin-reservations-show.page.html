@@ -67,23 +67,23 @@
 
                 <hr>
                   <div class="float-left">
-                   <input type="submit" class="btn btn-primary" value="Save ">
+                   <!-- <input type="submit" class="btn btn-primary" value="Save "> -->
                    <!--takes back to whatever month we were initially looking at    -->
-                   {{if eq $src "cal"}}
-                        <a href="#!" onclick="window.history.go(-1)" class="btn btn-warning">Cancel</a>                        <!-- the cancel button takes us to the previous page in browser history-->
-                   {{else}}
+                   <!-- {{if eq $src "cal"}}
+                        <a href="#!" onclick="window.history.go(-1)" class="btn btn-warning">Cancel</a>                        the cancel button takes us to the previous page in browser history
+                   {{else}} 
                       <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
-                   {{end}}  
+                   {{end}}   -->
                    {{if eq $res.Processed 0}}
                       <!-- <a href="#!" class="btn btn-info" onclick="processRes({$res:ID})">Mark as Processed</a>-->
-                     <input type="submit" class="btn btn-info" value="Mark as Processed"  onclick="processRes({$res:ID})"> 
+                     <!-- <input type="submit" class="btn btn-info" value="Mark as Processed"  onclick="processRes({$res:ID})">  -->
                {{end}}
             </div>
 
              <!-- <a href="#delete" class="btn btn-danger" onclick="deleteRes({$res:ID})">Delete</a> -->
-                   <div class="float-right">
+                   <!-- <div class="float-right">
                      <input type="submit" class="btn btn-danger" value="Delete" onclick="deleteRes({$res:ID})">
-             </div>
+             </div> -->
              <div class="clearfix"></div>
              </form>
      </div>
