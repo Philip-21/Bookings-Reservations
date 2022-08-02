@@ -39,6 +39,16 @@ var signupTest = []struct {
 		"/user/signup",
 		"/user/signup",
 	},
+	{
+		"Dennis",
+		"styles",
+		"denis@style.com",
+		"traeytt",
+		http.StatusOK,
+		"Valid-Request",
+		"user/signup",
+		"/",
+	},
 }
 
 // loginTests is the data for the Login handler tests
