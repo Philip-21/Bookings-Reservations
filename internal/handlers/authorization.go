@@ -12,6 +12,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "admin-dashboard.page.html", &models.TemplateData{})
+
+}
+
 func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "signup.page.html", &models.TemplateData{
 		Form: forms.New(nil),
@@ -49,6 +54,7 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	err = m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
 
 	if err != nil {
+
 		m.App.Session.Put(r.Context(), "error", "cant fill sigup credentials!")
 		http.Redirect(w, r, "user/signup", http.StatusTemporaryRedirect)
 	}
@@ -89,6 +95,12 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	id, _, err := m.DB.Authenticate(email, password)
 	if err != nil {
+		resp := jsonAuthorization{
+			Message: "user doesnot exist",
+		}
+		out, _ := json.Marshal(resp)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
 		log.Println(err)
 		//return back to the login form
 		m.App.Session.Put(r.Context(), "error", "invalid credentials")
@@ -108,9 +120,4 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.RenewToken(r.Context())
 	//redirects to the login page
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "admin-dashboard.page.html", &models.TemplateData{})
-
 }

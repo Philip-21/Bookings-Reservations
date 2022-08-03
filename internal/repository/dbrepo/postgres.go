@@ -236,7 +236,7 @@ func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email str
 	row := m.DB.QueryRowContext(ctx, query,
 		firstname, lastname, email, password, time.Now(), time.Now())
 	err := row.Scan(
-		&email, &password,
+		&firstname, &lastname, &email, &password,
 	)
 	if err != nil {
 		return err
