@@ -223,7 +223,7 @@ func (m *postgresDBRepo) UpdateUser(u models.User) error {
 
 //create  user
 
-func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email string, password string) error {
+func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email string, password string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -239,9 +239,9 @@ func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email str
 		&firstname, &lastname, &email, &password,
 	)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return "created succesfully", nil
 }
 
 //authenticate a user

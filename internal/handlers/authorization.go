@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -39,29 +38,24 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 
 	form := forms.New(r.PostForm)
-	form.Required("email", "password") //must be filled shows field cant be blank
+	form.Required("firstname", "lastname", "email", "password") //must be filled shows field cant be blank
 	form.IsEmail("email")
 	if !form.Valid() {
-		resp := jsonAuthorization{
-			Message: "invalid credentials",
-		}
-		out, _ := json.Marshal(resp)
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(out)
+		//shows invalid email address based on the IsEmail format in forms.go
+		//return an empty form and displays a message that
+		render.Template(w, r, "signup.page.html", &models.TemplateData{
+			Form: forms.New(nil),
+		})
 		return
 	}
 
-	err = m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
-
+	user, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
 	if err != nil {
-
 		m.App.Session.Put(r.Context(), "error", "cant fill sigup credentials!")
-		http.Redirect(w, r, "user/signup", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/user/signup", http.StatusTemporaryRedirect)
+		return
 	}
-	m.App.Session.Put(r.Context(), "firstname", firstname)
-	m.App.Session.Put(r.Context(), "lastname", lastname)
-	m.App.Session.Put(r.Context(), "email", email)
-	m.App.Session.Put(r.Context(), "password", password)
+	m.App.Session.Put(r.Context(), "user_id", user)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
 	//http redirect which directs to another page after the user fills a form,to prevent filling the form 2wice
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -87,7 +81,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	form.Required("email", "password") //must be filled shows field cant be blank
 	form.IsEmail("email")              // only a valid email type
 	if !form.Valid() {
-		//Take user back to the main login page for an invalid  form
+		//Take user back to the main login page shoing an empty form to fill
 		render.Template(w, r, "login.page.html", &models.TemplateData{
 			Form: form,
 		})
@@ -95,16 +89,12 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	id, _, err := m.DB.Authenticate(email, password)
 	if err != nil {
-		resp := jsonAuthorization{
-			Message: "user doesnot exist",
-		}
-		out, _ := json.Marshal(resp)
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(out)
-		log.Println(err)
 		//return back to the login form
-		m.App.Session.Put(r.Context(), "error", "invalid credentials")
-		http.Redirect(w, r, "user/login", http.StatusSeeOther)
+		log.Println(err)
+		m.App.Session.Put(r.Context(), "error", "User Doesnot exist")
+		//m.App.Session.Put(r.Response.Context(), "error", "invalid cedentials")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		return
 	}
 	///storing id in the session when authenticated  successfully
 	m.App.Session.Put(r.Context(), "user_id", id)

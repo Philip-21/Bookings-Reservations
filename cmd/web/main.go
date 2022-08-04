@@ -65,6 +65,7 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Restriction{})
 	gob.Register(models.User{})
 	gob.Register(map[string]int{})
+	gob.Register(models.TemplateData{})
 
 	config.LoadConfig() //load the viper configuration
 	// connect to database

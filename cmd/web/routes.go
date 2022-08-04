@@ -53,8 +53,8 @@ func routes(app *config.AppConfig) http.Handler {
 
 		router.Get("/reservations-new", handlers.Repo.AdminNewReservations)
 		router.Get("/reservations-all", handlers.Repo.AdminAllReservations)
-		router.Get("/reservations-calender", handlers.Repo.AdminReservationsCalender)
-		router.Post("/reservations-calender", handlers.Repo.AdminPostReservationsCalender)
+		//router.Get("/reservations-calender", handlers.Repo.AdminReservationsCalender)
+		//router.Post("/reservations-calender", handlers.Repo.AdminPostReservationsCalender)
 
 		router.Get("/process-reservations/{src}/{id}/do", handlers.Repo.AdminProcessReservation)
 		router.Get("/delete-reservations/{src}/{id}/do", handlers.Repo.AdminDeleteReservation)

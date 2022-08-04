@@ -6,7 +6,7 @@
         <div class="col">
             <h1>Login</h1>
 
-            <form method="post" action="/user/login" novalidate>
+            <form method="post" action="/user/login" novalidate> <!--no validate wont validate until the parameters based in forms.go (email) are met  -->
             <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
             <div class="form-group mt-3">
                 <label for="email">Email:</label>
@@ -29,7 +29,7 @@
             </div>
             <hr>
          <!--submit button-->
-            <input type="submit" class="btn btn-primary" value="submit">
+            <input type="submit" class="btn btn-primary" value="Submit">
           </form>
 
         </div>

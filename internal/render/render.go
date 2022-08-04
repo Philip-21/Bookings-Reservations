@@ -59,6 +59,8 @@ func NewRenderer(a *config.AppConfig) {
 }
 
 // AddDefaultData adds data for all templates
+//and will be parsed and referred  into the td *models.TemplateData
+//some of the items will display on the web page durig a session
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	// these items will be automatically populated when a page is rendered
 	td.Flash = app.Session.PopString(r.Context(), "flash") // PopString puts something in the session until the next time a page is displayed

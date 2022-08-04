@@ -18,7 +18,7 @@ type DatabaseRepo interface {
 	SearchAvailabilityForAllRooms(start, end time.Time) ([]models.Room, error)
 	GetRoomByID(id int) (models.Room, error)
 	GetUserByID(id int) (models.User, error)
-	CreateUser(firstname string, lastname string, email string, password string) error
+	CreateUser(firstname string, lastname string, email string, password string) (string, error)
 	UpdateUser(u models.User) error
 	Authenticate(email, testPassword string) (int, string, error)
 	AllReservations() ([]models.Reservation, error)

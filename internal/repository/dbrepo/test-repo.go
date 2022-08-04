@@ -162,6 +162,6 @@ func (m *testDBRepo) DeleteBlockByID(id int) error {
 	return nil
 }
 
-func (m *testDBRepo) CreateUser(firstname string, lastname string, email string, password string) error {
-	return nil
+func (m *testDBRepo) CreateUser(firstname string, lastname string, email string, password string) (string, error) {
+	return "Created ", nil
 }
