@@ -67,3 +67,7 @@ func (f *Form) IsEmail(field string) {
 		f.Errors.Add(field, "Invalid email address")
 	}
 }
+
+// func (f*Form)FirstName(field string){
+
+// }

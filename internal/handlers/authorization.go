@@ -22,10 +22,16 @@ func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+//shows login screen
+func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "login.page.html", &models.TemplateData{
+		Form: forms.New(nil), //creating an empty form
+	})
+}
+
 func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	//preventing session fixation attack by renewing the token
 	_ = m.App.Session.RenewToken(r.Context())
-	//_= m.App.Session.Cookie(r)
 	err := r.ParseForm()
 	if err != nil {
 		log.Println(err)
@@ -42,30 +48,22 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	form.IsEmail("email")
 	if !form.Valid() {
 		//shows invalid email address based on the IsEmail format in forms.go
-		//return an empty form and displays a message that
+		//return an empty form and displays
 		render.Template(w, r, "signup.page.html", &models.TemplateData{
-			Form: forms.New(nil),
+			Form: form,
 		})
 		return
 	}
 
-	user, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
+	user, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
 	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "cant fill sigup credentials!")
-		http.Redirect(w, r, "/user/signup", http.StatusTemporaryRedirect)
+		m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
+		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
 		return
 	}
-	m.App.Session.Put(r.Context(), "user_id", user)
+	m.App.Session.Put(r.Context(), "email", user)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
-	//http redirect which directs to another page after the user fills a form,to prevent filling the form 2wice
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-//shows login screen
-func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "login.page.html", &models.TemplateData{
-		Form: forms.New(nil), //creating an empty form
-	})
 }
 
 func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
@@ -108,6 +106,5 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.Destroy(r.Context())
 	//renew sesion token
 	_ = m.App.Session.RenewToken(r.Context())
-	//redirects to the login page
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

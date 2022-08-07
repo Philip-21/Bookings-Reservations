@@ -16,5 +16,5 @@ type TemplateData struct {
 	Error          string
 	Form           *forms.Form //template for forms
 	IsAuthenticted int         //of > 0 user is loged in if is < 0 user is logrd out
-
+	IsSignup       int
 }

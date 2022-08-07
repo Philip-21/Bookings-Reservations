@@ -223,7 +223,7 @@ func (m *postgresDBRepo) UpdateUser(u models.User) error {
 
 //create  user
 
-func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email string, password string) (string, error) {
+func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email string, password string) (string, string, string, string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -233,15 +233,17 @@ func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email str
 	($1, $2, $3, $4, $5, $6)
 	`
 
+	//var id int
 	row := m.DB.QueryRowContext(ctx, query,
 		firstname, lastname, email, password, time.Now(), time.Now())
 	err := row.Scan(
 		&firstname, &lastname, &email, &password,
 	)
 	if err != nil {
-		return "", err
+		return firstname, lastname, email, password, err
 	}
-	return "created succesfully", nil
+	log.Println("User Created ")
+	return firstname, lastname, email, password, nil
 }
 
 //authenticate a user

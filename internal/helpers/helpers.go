@@ -37,3 +37,8 @@ func IsAuthenticated(r *http.Request) bool {
 	exists := app.Session.Exists(r.Context(), "user_id")
 	return exists
 }
+
+func IsSignup(r *http.Request) bool {
+	exist := app.Session.Exists(r.Context(), "email")
+	return exist
+}

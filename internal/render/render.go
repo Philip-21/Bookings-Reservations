@@ -70,6 +70,10 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	if app.Session.Exists(r.Context(), "user_id") {
 		td.IsAuthenticted = 1 //user is loged in
 	}
+	//return td
+	if app.Session.Exists(r.Context(), "email") {
+		td.IsSignup = 1
+	}
 	return td
 }
 

@@ -9,6 +9,7 @@
 
             <form method="post" action="/user/signup" novalidate>
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+               
                 <div class="form-group mt-3">
                     <label for="firstname">FirstName:</label>
                     {{with .Form.Errors.Get "firstname"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
