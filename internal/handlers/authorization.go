@@ -56,11 +56,11 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
-	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
-		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
-		return
-	}
+	// if err != nil {
+	// 	// m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
+	// 	// http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
+	// 	return
+	// }
 	m.App.Session.Put(r.Context(), "email", user)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
