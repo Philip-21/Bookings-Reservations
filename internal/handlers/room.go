@@ -56,7 +56,7 @@ func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Session.Put(r.Context(), "reservation", res)
 
-	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+	http.Redirect(w, r, "/admin/make-reservation", http.StatusSeeOther)
 
 }
 
@@ -75,7 +75,7 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 	room, err := m.DB.GetRoomByID(roomID)
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "Can't get room from db!")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -86,5 +86,5 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Session.Put(r.Context(), "reservation", res)
 
-	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+	http.Redirect(w, r, "/admin/make-reservation", http.StatusSeeOther)
 }

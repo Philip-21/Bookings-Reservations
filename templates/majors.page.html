@@ -82,7 +82,7 @@
                 formData.append("csrf_token", "{{.CSRFToken}}");
                 formData.append("room_id", "2");
 
-                fetch('/search-availability-json', {
+                fetch('/admin/search-availability-json', {
                     method: "post",
                     body: formData,
                 })
@@ -93,7 +93,7 @@
                                 icon: 'success',
                                 showConfirmButton: false,
                                 msg: '<p>Room is available!</p>'
-                                    + '<p><a href="/book-room?id='
+                                    + '<p><a href="/admin/book-room?id='
                                     + data.room_id
                                     + '&s='
                                     + data.start_date

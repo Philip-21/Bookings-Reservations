@@ -19,6 +19,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	router.Get("/", handlers.Repo.Home)
 	router.Get("/about", handlers.Repo.About)
+	router.Get("/contact", handlers.Repo.Contact)
 
 	//----------------------------------Authorization Requests-----------------------------//
 	router.Get("/user/signup", handlers.Repo.DisplaySignUp)
@@ -26,21 +27,6 @@ func routes(app *config.AppConfig) http.Handler {
 	router.Get("/user/logout", handlers.Repo.Logout)
 	router.Post("/user/login", handlers.Repo.PostShowLogin)
 	router.Post("/user/signup", handlers.Repo.SignUp)
-
-	//rooms
-	router.Get("/generals-quarters", handlers.Repo.Generals)
-	router.Get("/majors-suite", handlers.Repo.Majors)
-
-	//------reservations and information----------------//
-	router.Get("/search-availability", handlers.Repo.Availability)
-	router.Get("/choose-room/{id}", handlers.Repo.ChooseRoom)
-	router.Get("/book-room", handlers.Repo.BookRoom)
-	router.Get("/contact", handlers.Repo.Contact)
-	router.Get("/reservation-summary", handlers.Repo.ReservationSummary)
-	router.Get("/make-reservation", handlers.Repo.Reservation)
-	router.Post("/search-availability", handlers.Repo.PostAvailability)
-	router.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
-	router.Post("/make-reservation", handlers.Repo.PostReservation)
 
 	//gets the static files folder which contains the image
 	fileServer := http.FileServer(http.Dir("./static/")) //.gets to the root of the application
@@ -51,11 +37,26 @@ func routes(app *config.AppConfig) http.Handler {
 		router.Use(Auth) //the login middleware
 		router.Get("/dashboard", handlers.Repo.AdminDashboard)
 
-		router.Get("/reservations-new", handlers.Repo.AdminNewReservations)
-		router.Get("/reservations-all", handlers.Repo.AdminAllReservations)
+		//rooms
+		router.Get("/generals-quarters", handlers.Repo.Generals)
+		router.Get("/majors-suite", handlers.Repo.Majors)
+		router.Get("/choose-room/{id}", handlers.Repo.ChooseRoom)
+
 		//router.Get("/reservations-calender", handlers.Repo.AdminReservationsCalender)
 		//router.Post("/reservations-calender", handlers.Repo.AdminPostReservationsCalender)
 
+		//------reservations and information----------------//
+		router.Get("/search-availability", handlers.Repo.Availability)
+		router.Post("/search-availability", handlers.Repo.PostAvailability)
+		router.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
+		router.Get("/book-room", handlers.Repo.BookRoom)
+		router.Post("/make-reservation", handlers.Repo.PostReservation)
+		router.Get("/make-reservation", handlers.Repo.Reservation)
+		router.Get("/reservation-summary", handlers.Repo.ReservationSummary)
+		router.Get("/reservations-new", handlers.Repo.AdminNewReservations)
+		router.Get("/reservations-all", handlers.Repo.AdminAllReservations)
+
+		//handling reservations
 		router.Get("/process-reservations/{src}/{id}/do", handlers.Repo.AdminProcessReservation)
 		router.Get("/delete-reservations/{src}/{id}/do", handlers.Repo.AdminDeleteReservation)
 

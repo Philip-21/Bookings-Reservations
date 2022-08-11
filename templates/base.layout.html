@@ -36,29 +36,17 @@
               </li>
 
               <li class="nav-item">
+                <a class="nav-link" href="/user/signup">SignUp</a>
+              </li>
+
+              <li class="nav-item">
                 <a class="nav-link" href="/about">About</a>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="/user/signup">SignUp</a>
-              </li>
-
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Rooms
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="/generals-quarters">General Rooms</a></li>
-                  <li><a class="dropdown-item" href="/majors-suite">Major's Suite</a></li>
-        
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/search-availability">Book Now</a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" href="/contact">Contact</a>
               </li>
+              
               <li class="nav-item">
                 <!--shows when a user is logged in or out -->
                 {{if eq .IsAuthenticted 1}} <!--calls the Isautheticated template-->

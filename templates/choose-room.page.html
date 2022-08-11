@@ -1,6 +1,7 @@
 {{template "base" .}}
 
 {{define "content"}}
+<!--make reservation section on the Admin dashboard-->
     <div class="container">
         <div class="row">
             <div class="col">
@@ -10,7 +11,7 @@
 
                 <ul>
                     {{range $rooms}}
-                        <li><a href="/choose-room/{{.ID}}">{{.RoomName}}</a></li>    <!--generate the link ofthe available roomss-->
+                        <li><a href="/admin/choose-room/{{.ID}}">{{.RoomName}}</a></li>    <!--generate the link ofthe available roomss-->
                     {{end}}
                 </ul>
             </div>

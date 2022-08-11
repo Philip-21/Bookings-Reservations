@@ -83,7 +83,7 @@
                     formData.append("room_id", "1");
                      
                      // an ajax request that searches availability of rooms
-                    fetch('/search-availability-json', {
+                    fetch('/admin/search-availability-json', {
                         method: "post",
                         body: formData,
                     })
@@ -96,7 +96,7 @@
                                     icon: 'success',
                                     showConfirmButton: false,
                                     msg: '<p>Room is available!</p>'
-                                        + '<p><a href="/book-room?id=' //hyper links to startdate,end date and roomid 
+                                        + '<p><a href="/admin/book-room?id=' //hyper links to startdate,end date and roomid 
                                         + data.room_id  //generated from the json response in handlers
                                         + '&s='
                                         + data.start_date
