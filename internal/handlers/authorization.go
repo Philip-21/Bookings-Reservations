@@ -36,7 +36,6 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-
 	firstname := r.Form.Get("firstname")
 	lastname := r.Form.Get("lastname")
 	email := r.Form.Get("email")
@@ -46,6 +45,7 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 	form.Required("firstname", "lastname", "email", "password") //must be filled shows field cant be blank
 	form.IsEmail("email")
+	form.MinLength("password", 8)
 	if !form.Valid() {
 		//shows invalid email address based on the IsEmail format in forms.go
 		//return an empty form and displays
@@ -94,6 +94,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
+	log.Println("Logged in Succesfully")
 	///storing id in the session when authenticated  successfully
 	m.App.Session.Put(r.Context(), "user_id", id)
 	m.App.Session.Put(r.Context(), "flash", "Logged in Successfully")

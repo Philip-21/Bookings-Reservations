@@ -6,6 +6,7 @@
             <div class="col">
                 {{$res := index .Data "reservation"}}
 
+                <!--gotten from the rservation handlers-->
                 <h1>Make a Reservation</h1>
                 <p><strong>Reservation Details</strong><br>
                 Room: {{$res.Room.RoomName}}<br>
