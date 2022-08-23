@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -61,6 +62,10 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	// 	// http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
 	// 	return
 	// }
+	_, err = json.Marshal(user)
+	if err != nil {
+		return
+	}
 	m.App.Session.Put(r.Context(), "email", user)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -94,6 +99,10 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
+	_, err = json.Marshal(id)
+	if err != nil {
+		return
+	}
 	log.Println("Logged in Succesfully")
 	///storing id in the session when authenticated  successfully
 	m.App.Session.Put(r.Context(), "user_id", id)
@@ -107,5 +116,7 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.Destroy(r.Context())
 	//renew sesion token
 	_ = m.App.Session.RenewToken(r.Context())
+	m.App.Session.Put(r.Context(), "flash", "Logged Out")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+	log.Println("Logged Out")
 }
