@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
-//-------------------------------------defining a router---------------------------------------------------\\
+// -------------------------------------defining a router---------------------------------------------------\\
 func routes(app *config.AppConfig) http.Handler {
 	router := chi.NewRouter()
 

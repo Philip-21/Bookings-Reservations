@@ -23,7 +23,7 @@ func (m *Repository) DisplaySignUp(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-//shows login screen
+// shows login screen
 func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.html", &models.TemplateData{
 		Form: forms.New(nil), //creating an empty form
@@ -110,7 +110,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther) //returns to home page after loggin successfully
 }
 
-//shows logout
+// shows logout
 func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	//destroy the session
 	_ = m.App.Session.Destroy(r.Context())
