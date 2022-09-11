@@ -1,3 +1,13 @@
+create_table("room_restrictions") {
+	t.Column("id", "integer", {primary: true})
+    t.Column("start_date", "date", {})
+    t.Column("end_date", "date", {})
+    t.Column("room_id", "integer", {})
+    t.Column("restriction_id","integer",{})
+    t.Column("reservation_id","integer",{})
+
+}
+
 add_foreign_key("room_restrictions", "room_id", {"rooms": ["id"]}, {
     "on_delete": "cascade",
     "on_update": "cascade",
@@ -13,4 +23,3 @@ add_foreign_key("room_restrictions", "reservation_id", {"reservation": ["id"]}, 
     "on_delete": "cascade",
     "on_update": "cascade",
 })
-

@@ -1,7 +1,5 @@
 
 
-
-
 create_table("reservation"){
     t.Column("id","integer",{primary:true})
     t.Column("first_name", "string", {"default":""})

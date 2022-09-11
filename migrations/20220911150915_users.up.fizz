@@ -1,5 +1,3 @@
-
-
  create_table("users") {
   t.Column("id","integer",{primary:true})
   t.Column("first_name", "string", {"default":""})

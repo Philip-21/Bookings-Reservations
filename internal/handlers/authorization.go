@@ -94,8 +94,8 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//return back to the login form
 		log.Println(err)
-		m.App.Session.Put(r.Context(), "error", "User Doesnot exist")
-		//m.App.Session.Put(r.Response.Context(), "error", "invalid cedentials")
+		m.App.Session.Put(r.Context(), "error", "User Does not exist")
+		m.App.Session.Put(r.Context(), "flash", "User Does not Exist")
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
