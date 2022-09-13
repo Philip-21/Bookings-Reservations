@@ -121,15 +121,16 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	form.MinLength("first_name", 3)
 	form.IsEmail("email")
 
+	//data stores and displays the dates and room name
+	data := make(map[string]interface{})
+	data["reservation"] = reservation
 	if !form.Valid() {
-		data := make(map[string]interface{})
-		data["reservation"] = reservation
-		http.Error(w, "my own error message", http.StatusSeeOther)
+		m.App.Session.Put(r.Context(), "error", "Refresh page to get Back your Reservation Details,then input the required field")
 		render.Template(w, r, "make-reservation.page.html", &models.TemplateData{
-			//createdform and data  will be saved in the template data
-			Form: form,
-			Data: data,
+			Form: form, //returns a new empty form due to errors
+			Data: data, //data  will still be saved and displayed incase an empty form is created if an error occurs
 		})
+
 		return
 	}
 
@@ -156,7 +157,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
-	log.Println("Reservation Inserted into room restriction table")
+	log.Println("ReservationID Inserted into room restriction table")
 
 	//throw the variable(reservation) into the session when we get to the reservation summary page
 	//we pull the value out of the session send it to the template and display the information

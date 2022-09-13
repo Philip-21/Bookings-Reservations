@@ -80,7 +80,7 @@
                     let form = document.getElementById("check-availability-form");
                     let formData = new FormData(form);
                     formData.append("csrf_token", "{{.CSRFToken}}");
-                    formData.append("room_id", "1");
+                    formData.append("room_id", "2"); //room id of 2
                      
                      // an ajax request that searches availability of rooms
                     fetch('/admin/search-availability-json', {
@@ -107,7 +107,7 @@
                                 })
                             } else {
                                 attention.error({
-                                    msg: "No availability",
+                                    msg:"Not available, Date Currently Booked",
                                 })
                             }
                         })
