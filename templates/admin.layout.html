@@ -70,7 +70,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="ti-shield menu-icon"></i>
-                        <span class="menu-title">Rooms</span>
+                        <span class="menu-title">Book a Room</span>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <li><a class="dropdown-item" href="/admin/generals-quarters">General Rooms</a></li>
@@ -202,8 +202,18 @@
         })
     }
 
-</script>
 
+{{with .Error}}
+notify("{{.}}","error")
+{{end}}
+
+{{with .Flash}}
+notify("{{.}}", "success")
+{{end}}
+
+{{with .Warning}}
+notify("{{.}}", "warning")
+{{end}}
   </script>    
   
 {{block "js" . }}

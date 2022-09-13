@@ -25,7 +25,7 @@ var session *scs.SessionManager
 var infoLog *log.Logger
 var errorLog *log.Logger
 
-//the main application function that runs the application
+// the main application function that runs the application
 func main() {
 	db, err := run()
 	if err != nil {
@@ -56,13 +56,13 @@ func main() {
 	log.Fatal(err)
 }
 
-//a function for testing
+// a function for testing
 func run() (*driver.DB, error) {
 	// what i am  going to put in the session
 	gob.Register(models.Reservation{})
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
-	gob.Register(models.Restriction{})
+	//gob.Register(models.Restriction{})
 	gob.Register(models.User{})
 	gob.Register(map[string]int{})
 	gob.Register(models.TemplateData{})

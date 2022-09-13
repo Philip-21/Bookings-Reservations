@@ -132,7 +132,7 @@ func (m *postgresDBRepo) InsertReservation(res models.Reservation) (int, error) 
 
 	var newID int
 	//speaking to the database, adding new entries to database
-	stmt := `insert into reservations (first_name, last_name, email, phone, start_date,
+	stmt := `insert into reservation (first_name, last_name, email, phone, start_date,
 			end_date, room_id, created_at, updated_at) 
 		values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id` //returning id generates reservationID  to be used in the handlers
 
@@ -411,13 +411,16 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesByRoomID(start, end time.Time,
 	return false, nil
 }
 
-// SearchAvailabilityForAllRooms returns a slice of available rooms, if any, for given date range when searched by the user
+// SearchAvailabilityForAllRooms returns a slice of available rooms,
+// if any, for given date range when searched by the user
 func (m *postgresDBRepo) SearchAvailabilityForAllRooms(start, end time.Time) ([]models.Room, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	var rooms []models.Room
-	//gets the id and room names from the rooms table, where the id in the rooms table is not in the room restrictions table to get a particular room available
+	//gets the id and room names from the rooms table,
+	//where the id in the rooms table is not in the room restrictions table
+	//to get a particular room available
 	query := `
 		select
 			r.id, r.room_name
@@ -486,9 +489,9 @@ func (m *postgresDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 	defer cancel()
 
 	stmt := `insert into room_restrictions (start_date, end_date, room_id, reservation_id,	
-			created_at, updated_at, restriction_id) 
+			created_at, updated_at) 
 			values
-			($1, $2, $3, $4, $5, $6, $7)`
+			($1, $2, $3, $4, $5, $6)`
 
 	_, err := m.DB.ExecContext(ctx, stmt,
 		r.StartDate,
@@ -497,7 +500,7 @@ func (m *postgresDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 		r.ReservationID,
 		time.Now(),
 		time.Now(),
-		r.RestrictionID,
+		//r.RestrictionID,
 	)
 
 	if err != nil {
@@ -506,6 +509,7 @@ func (m *postgresDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 	return nil
 }
 
+// /////-----------Not Used---///////
 // returns restrictions for a room by date range
 func (m *postgresDBRepo) GetRestrictionsForRoomsByDate(roomID int, start, end time.Time) ([]models.RoomRestriction, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

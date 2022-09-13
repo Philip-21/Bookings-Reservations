@@ -22,13 +22,13 @@ type Room struct {
 	UpdatedAt time.Time
 }
 
-// Restriction is the restriction model
-type Restriction struct {
-	ID              int    `json:"id"`
-	RestrictionName string `json:"Restrictionname"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-}
+// // Restriction is the restriction model
+// type Restriction struct {
+// 	ID              int    `json:"id"`
+// 	RestrictionName string `json:"Restrictionname"`
+// 	CreatedAt       time.Time
+// 	UpdatedAt       time.Time
+// }
 
 // Reservation is the reservation model
 type Reservation struct {
@@ -58,7 +58,7 @@ type RoomRestriction struct {
 	UpdatedAt     time.Time
 	Room          Room
 	Reservation   Reservation
-	Restriction   Restriction
+	//Restriction   Restriction
 }
 
 ///Mail Data holda an email message
