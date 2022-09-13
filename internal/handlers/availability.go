@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -20,12 +21,11 @@ func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 // Availability renders the search availability page
 func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "search-availability.page.html", &models.TemplateData{})
-} //w, r, "search-availability.page.html", &models.TemplateData{}   calls w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData from the Rendermplate ta
+}
 
 // PostAvailability renders the search availability page
 func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
-
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "can't parse form!")
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
@@ -58,6 +58,7 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
+	log.Println("Searched the Database for Available rooms")
 	//if the user searches for a room that is not available,
 	//it stores he error in a session and redircts back to the page and prints no availability
 	if len(rooms) == 0 {

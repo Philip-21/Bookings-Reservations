@@ -8,7 +8,7 @@ import (
 	"github.com/Philip-21/bookings/internal/config"
 )
 
-//this helpers file contains things that will be used in various parts of the application interms of error handling
+// this helpers file contains things that will be used in various parts of the application interms of error handling
 var app *config.AppConfig
 
 // NewHelpers sets up app config for helpers
@@ -36,9 +36,4 @@ func ServerError(w http.ResponseWriter, err error) {
 func IsAuthenticated(r *http.Request) bool {
 	exists := app.Session.Exists(r.Context(), "user_id")
 	return exists
-}
-
-func IsSignup(r *http.Request) bool {
-	exist := app.Session.Exists(r.Context(), "email")
-	return exist
 }

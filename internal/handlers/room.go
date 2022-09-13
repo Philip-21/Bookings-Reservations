@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Philip-21/bookings/internal/helpers"
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/Philip-21/bookings/internal/render"
 )
@@ -37,18 +38,20 @@ func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 	// changed to this, so we can test it more easily
 	// split the URL up by /, and grab the 3rd element
 	exploded := strings.Split(r.RequestURI, "/")
-	//we grab the third element of that slice (position 2, since slices start counting from 0), and parse that into an int.
-	roomID, err := strconv.Atoi(exploded[2])
+	//we grab the 4th element of that slice (index 3, since slices start counting from 0), and parse that into an int.
+	roomID, err := strconv.Atoi(exploded[3])
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "missing url parameter")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
+		helpers.ClientError(w, http.StatusNotImplemented)
+		helpers.ServerError(w, err)
 		return
 	}
 	//Get the reservation variable where RoomID is located from a session
 	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
 		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
 	//updating the RoomID, and putting it back in the session
