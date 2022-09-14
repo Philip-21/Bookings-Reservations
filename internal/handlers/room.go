@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -86,6 +87,7 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 	res.RoomID = roomID
 	res.StartDate = startDate
 	res.EndDate = endDate
+	log.Println("Room Booked")
 
 	m.App.Session.Put(r.Context(), "reservation", res)
 

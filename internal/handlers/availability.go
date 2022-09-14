@@ -58,7 +58,7 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
-	log.Println("Searched the Database for Available rooms")
+	log.Println("Searched the Database for Available rooms By Date")
 	//if the user searches for a room that is not available,
 	//it stores he error in a session and redircts back to the page and prints no availability
 	if len(rooms) == 0 {
@@ -88,6 +88,7 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 // AvailabilityJSON handles request for availability and send JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	// need to parse request body
+	log.Println("Searching for Available Rooms Before Booking")
 	err := r.ParseForm()
 	if err != nil {
 		// can't parse form, so return appropriate json
@@ -111,8 +112,10 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	roomID, _ := strconv.Atoi(r.Form.Get("room_id"))
 	//call database function
+	log.Println("Searching DB for room by id And Dates.....")
 	available, err := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
 	if err != nil {
+		log.Println("Room Not available, Date Currently Booked")
 		// got a database error, so return appropriate json
 		resp := jsonAvailability{
 			OK:      false,
@@ -124,6 +127,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 		w.Write(out)
 		return
 	}
+	log.Println("Search for room by Id and Dates completed")
 	resp := jsonAvailability{
 		OK:        available,
 		Message:   "",

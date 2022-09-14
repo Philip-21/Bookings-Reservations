@@ -161,7 +161,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	//throw the variable(reservation) into the session when we get to the reservation summary page
 	//we pull the value out of the session send it to the template and display the information
-
+	log.Println("Rseservation Created")
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 	m.App.Session.Put(r.Context(), "flash", "Reservation Created")
 

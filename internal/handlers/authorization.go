@@ -66,6 +66,7 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	log.Println("Signed Up Successfully")
 	m.App.Session.Put(r.Context(), "email", user)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)

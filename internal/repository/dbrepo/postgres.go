@@ -382,6 +382,7 @@ func (m *postgresDBRepo) AllRooms() ([]models.Room, error) {
 }
 
 // SearchAvailabilityByDatesByRoomID returns true if availability exists for roomID, and false if no availability
+// The Make a Reservation Button uses this func from the availability handler
 func (m *postgresDBRepo) SearchAvailabilityByDatesByRoomID(start, end time.Time, roomID int) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
