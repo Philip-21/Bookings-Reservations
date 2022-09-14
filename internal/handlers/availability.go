@@ -23,6 +23,7 @@ func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "search-availability.page.html", &models.TemplateData{})
 }
 
+// Search Available Room Buttton in admin Dashboar template
 // PostAvailability renders the search availability page
 func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
@@ -51,14 +52,17 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
+	log.Println("Dates Inputed")
 	//connecting the database functions and gettin the dates
+	log.Println("Searching DB for all Rooms and getting its Dates....and comparing with inputed dates ")
 	rooms, err := m.DB.SearchAvailabilityForAllRooms(startDate, endDate)
 	if err != nil {
+		log.Println("Room Not Available, Date is fully Booked")
 		m.App.Session.Put(r.Context(), "error", "can't get availability for rooms")
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
-	log.Println("Searched the Database for Available rooms By Date")
+	log.Println("Searched the Database for All rooms By the Dates inputed")
 	//if the user searches for a room that is not available,
 	//it stores he error in a session and redircts back to the page and prints no availability
 	if len(rooms) == 0 {
@@ -72,12 +76,12 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	data["rooms"] = rooms                //puting the rooms in the map
 
 	//saves the dates and puts them in a session to be able to choose the rooms available
-	res := models.Reservation{
+	resDate := models.Reservation{
 		StartDate: startDate,
 		EndDate:   endDate,
 	}
-
-	m.App.Session.Put(r.Context(), "reservation", res)
+	log.Println("Inpted Dates Created")
+	m.App.Session.Put(r.Context(), "reservation", resDate)
 	//render templates to choose a particuar room and parse data,
 	//in the template, a link is generated  /admin/choose/room and a Get requests calls the choose room handler
 	render.Template(w, r, "choose-room.page.html", &models.TemplateData{
@@ -85,6 +89,7 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// The Make a Reservation button in the Admin Dashboard
 // AvailabilityJSON handles request for availability and send JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	// need to parse request body

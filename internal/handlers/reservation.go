@@ -63,6 +63,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 // PostReservation handles the posting of a reservation form
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
+	log.Println("Making a Reservation")
 	err := r.ParseForm() //parsing form data
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "can't parse form!")

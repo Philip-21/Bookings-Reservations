@@ -38,6 +38,7 @@ func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 	//"explode" the URL into a slice of strings
 	// changed to this, so we can test it more easily
 	// split the URL up by /, and grab the 3rd element
+	log.Println("Choosing Room")
 	exploded := strings.Split(r.RequestURI, "/")
 	//we grab the 4th element of that slice (index 3, since slices start counting from 0), and parse that into an int.
 	roomID, err := strconv.Atoi(exploded[3])
@@ -59,6 +60,7 @@ func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 	res.RoomID = roomID
 
 	m.App.Session.Put(r.Context(), "reservation", res)
+	log.Println("Room Chosen")
 
 	http.Redirect(w, r, "/admin/make-reservation", http.StatusSeeOther)
 
