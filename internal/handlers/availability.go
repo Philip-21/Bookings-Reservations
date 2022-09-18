@@ -76,12 +76,12 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	data["rooms"] = rooms                //puting the rooms in the map
 
 	//saves the dates and puts them in a session to be able to choose the rooms available
-	resDate := models.Reservation{
+	res := models.Reservation{
 		StartDate: startDate,
 		EndDate:   endDate,
 	}
 	log.Println("Inpted Dates Created")
-	m.App.Session.Put(r.Context(), "reservation", resDate)
+	m.App.Session.Put(r.Context(), "reservation", res)
 	//render templates to choose a particuar room and parse data,
 	//in the template, a link is generated  /admin/choose/room and a Get requests calls the choose room handler
 	render.Template(w, r, "choose-room.page.html", &models.TemplateData{
