@@ -12,15 +12,16 @@ import (
 var SECRET_KEY = os.Getenv("SECRET_KEY")
 
 type SignedDetails struct {
-	Username string
+	ID    int
+	Email string
 	jwt.StandardClaims
 }
 
-func GenerateToken(username string) (signedToken string, signedRefreshToken string, err error) {
-
+func GenerateToken(id int, email string) (signedToken string, signedRefreshToken string, err error) {
 	//generate a token
 	Payload := &SignedDetails{
-		Username: username,
+		ID:    id,
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(1)).Unix(),
 		},
@@ -31,12 +32,12 @@ func GenerateToken(username string) (signedToken string, signedRefreshToken stri
 		},
 	}
 	//call the jwt
-	token, err := jwt.NewWithClaims(jwt.SigningMethodES256, Payload).SignedString([]byte(SECRET_KEY))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, Payload).SignedString([]byte(SECRET_KEY)) //=Signature
 	if err != nil {
 		log.Panic(err)
 		return
 	}
-	RefreshToken, err := jwt.NewWithClaims(jwt.SigningMethodES256, RefreshPayload).SignedString([]byte(SECRET_KEY))
+	RefreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, RefreshPayload).SignedString([]byte(SECRET_KEY))
 	if err != nil {
 		log.Panic(err)
 		return

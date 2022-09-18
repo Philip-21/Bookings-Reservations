@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Philip-21/bookings/internal/forms"
+	"github.com/Philip-21/bookings/internal/helpers"
 
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/Philip-21/bookings/internal/render"
@@ -100,10 +101,18 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
-	_, err = json.Marshal(id)
+	token, _, err := helpers.GenerateToken(id, email)
 	if err != nil {
+		log.Println("error in generating token")
 		return
 	}
+	log.Println("Token Generated")
+	_, err = json.Marshal(token)
+	if err != nil {
+		log.Println("error in generating JSON")
+		return
+	}
+
 	log.Println("Logged in Succesfully")
 	///storing id in the session when authenticated  successfully
 	m.App.Session.Put(r.Context(), "user_id", id)

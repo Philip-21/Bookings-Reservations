@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/Philip-21/bookings/internal/helpers"
 	"github.com/justinas/nosurf"
 )
 
-//a middleware that writes to the console when somebody hits a page
+// a middleware that writes to the console when somebody hits a page
 // NoSurf adds CSRF protection to all POST requests
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
@@ -21,16 +22,29 @@ func NoSurf(next http.Handler) http.Handler {
 	return csrfHandler
 }
 
-//adding a middleware that tells the webserver to remember a state using sessions
+// adding a middleware that tells the webserver to remember a state using sessions
 // SessionLoad loads and saves the session on every request
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
 }
 
-//makes routes secure by only allowing logged in users to have access to certain parts,pages(routes) of the application
+// makes routes secure by only allowing logged in users to have access to certain parts,pages(routes) of the application
 func Auth(next http.Handler) http.Handler {
 	//calling the helpers func that requires a pointer to http.request as a parameter
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		UserToken := r.Header.Get("token")
+		if UserToken == "" {
+			return
+		}
+		Payload, err := helpers.ValidateToken(UserToken)
+		if err != "" {
+			log.Println("Coudnt validate token ")
+			return
+		}
+		r.Response.Request.Header.Set("id", Payload.Id)
+		r.Response.Request.Header.Set("email", Payload.Email)
+		log.Println("Token Validated")
+
 		if !helpers.IsAuthenticated(r) {
 			//not authenticted
 			session.Put(r.Context(), "error", "log in first!")
@@ -38,5 +52,7 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 		next.ServeHTTP(w, r)
+
 	})
+
 }
