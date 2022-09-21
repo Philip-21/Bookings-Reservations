@@ -32,8 +32,15 @@ func SessionLoad(next http.Handler) http.Handler {
 func Auth(next http.Handler) http.Handler {
 	//calling the helpers func that requires a pointer to http.request as a parameter
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		UserToken := r.Header.Get("token")
+		if !helpers.IsAuthenticated(r) {
+			//not authenticted
+			session.Put(r.Context(), "error", "log in first!")
+			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+			return
+		}
+		UserToken := r.Header.Get("user-token")
 		if UserToken == "" {
+			http.Error(w, "Authorization headers not provided", http.StatusInternalServerError)
 			return
 		}
 		Payload, err := helpers.ValidateToken(UserToken)
@@ -45,12 +52,6 @@ func Auth(next http.Handler) http.Handler {
 		r.Response.Request.Header.Set("email", Payload.Email)
 		log.Println("Token Validated")
 
-		if !helpers.IsAuthenticated(r) {
-			//not authenticted
-			session.Put(r.Context(), "error", "log in first!")
-			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
-			return
-		}
 		next.ServeHTTP(w, r)
 
 	})

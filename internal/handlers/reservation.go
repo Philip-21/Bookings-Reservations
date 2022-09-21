@@ -181,7 +181,9 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 		http.Redirect(w, r, "/admin/dashboard", http.StatusTemporaryRedirect)
 		return
 	}
-	//getting rid of the session,which removes data from the reservation
+	//Remove deletes the given key and corresponding value from the session data.
+	//The session data status will be set to Modified.
+	//If the key is not present this operation is a no-op
 	m.App.Session.Remove(r.Context(), "reservation")
 
 	data := make(map[string]interface{}) //Data format in templates-data.go
@@ -195,7 +197,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 
 	//render templates and parse data
 	render.Template(w, r, "reservation-summary.page.html", &models.TemplateData{
-		Data:      data,
+		Data:      data, //session data
 		StringMap: stringMap,
 	})
 }

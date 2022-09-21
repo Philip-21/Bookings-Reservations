@@ -7,11 +7,21 @@ import (
 	"github.com/Philip-21/bookings/internal/handlers"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 )
 
 // -------------------------------------defining a router---------------------------------------------------\\
 func routes(app *config.AppConfig) http.Handler {
 	router := chi.NewRouter()
+
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https//*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"user-token", "Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 
 	router.Use(middleware.Recoverer) // middleware.Recoverer absorb panics and prints the stack trace,panic occurs when a program cannot function
 	router.Use(NoSurf)               //Nosurf adds CSRF protection to POST request

@@ -2,11 +2,7 @@ package helpers
 
 import (
 	"testing"
-
-	"github.com/alexedwards/scs/v2"
 )
-
-var session *scs.SessionManager
 
 var LoginTest = []struct {
 	id    int
