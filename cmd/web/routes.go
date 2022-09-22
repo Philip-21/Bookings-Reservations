@@ -15,9 +15,10 @@ func routes(app *config.AppConfig) http.Handler {
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https//*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"user-token", "Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedOrigins: []string{"https//*", "http://*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"},
+		AllowedHeaders: []string{"Access-Control-Request-Method", "Access-Control-Request-Headers", "Accept", "Authorization", " Accept-Encoding",
+			"Content-Type", "Connection", " Host", "Origin", "User-Agent", "Referer", "Cache-Control", "X-header", "Token", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300,

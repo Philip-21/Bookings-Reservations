@@ -2,7 +2,7 @@ package helpers
 
 import (
 	"fmt"
-	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -11,64 +11,44 @@ import (
 
 var SECRET_KEY = os.Getenv("SECRET_KEY")
 
-type SignedDetails struct {
-	ID    int
-	Email string
-	jwt.StandardClaims
+func GenerateJWT(email string) (string, error) {
+
+	var mySigningKey = []byte(SECRET_KEY)
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+
+	claims["authorized"] = true
+	claims["email"] = email
+	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+
+	tokenString, err := token.SignedString(mySigningKey)
+
+	if err != nil {
+		fmt.Errorf("Something Went Wrong: %s", err.Error())
+		return "", err
+	}
+	return tokenString, nil
 }
 
-func GenerateToken(id int, email string) (signedToken string, signedRefreshToken string, err error) {
-	//generate a token
-	Payload := &SignedDetails{
-		ID:    id,
-		Email: email,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(1)).Unix(),
-		},
-	}
-	RefreshPayload := &SignedDetails{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(1)).Unix(),
-		},
-	}
-	//call the jwt
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, Payload).SignedString([]byte(SECRET_KEY)) //=Signature
-	if err != nil {
-		log.Panic(err)
-		return
-	}
-	RefreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, RefreshPayload).SignedString([]byte(SECRET_KEY))
-	if err != nil {
-		log.Panic(err)
-		return
-	}
-	return token, RefreshToken, err
-}
+func ValidateToken(r *http.Request) (string, error) {
+	if r.Header["Token"] != nil {
+		tokenString := r.Header["Token"][0]
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 
-// confirms the token to be used in the middlewre
-func ValidateToken(signedToken string) (Payload *SignedDetails, msg string) {
-	token, err := jwt.ParseWithClaims(
-		signedToken,
-		&SignedDetails{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(SECRET_KEY), nil
-		},
-	)
-	if err != nil {
-		msg = err.Error()
-		return
-	}
-	Payload, ok := token.Claims.(*SignedDetails)
-	if !ok {
-		msg = fmt.Sprintf("invalid token ")
-		msg = err.Error()
-		return
+			if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+				return nil, fmt.Errorf("there's an error with the signing method")
+			}
+			return SECRET_KEY, nil
+		})
+		if err != nil {
+			return "Error Parsing Token: ", err
+		}
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if ok && token.Valid {
+			email := claims["email"].(string)
+			return email, nil
+		}
 	}
 
-	if Payload.ExpiresAt < time.Now().Local().Unix() {
-		msg = fmt.Sprintf("token is expired")
-		msg = err.Error()
-		return
-	}
-	return Payload, msg
+	return "unable to extract claims", nil
 }

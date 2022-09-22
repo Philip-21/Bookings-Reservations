@@ -58,16 +58,25 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
-	// if err != nil {
-	// 	// m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
-	// 	// http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
-	// 	return
-	// }
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
+		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
+		return
+	}
 	_, err = json.Marshal(user)
 	if err != nil {
 		return
 	}
+	err = json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 	log.Println("Signed Up Successfully")
+
 	m.App.Session.Put(r.Context(), "email", user)
 	m.App.Session.Put(r.Context(), "flash", "Signed up Successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -92,6 +101,8 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	//var authRole models.User
+
 	id, _, err := m.DB.Authenticate(email, password)
 	if err != nil {
 		//return back to the login form
@@ -101,8 +112,11 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
-	token, _, err := helpers.GenerateToken(id, email)
+	token, err := helpers.GenerateJWT(email)
 	if err != nil {
+		http.Error(w, "error in generating token", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(err)
 		log.Println("error in generating token")
 		return
 	}
@@ -112,6 +126,9 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		log.Println("error in generating JSON")
 		return
 	}
+	r.Header.Set("Token", token)
+	w.Header().Set("Content-Type", "application/json")
+	//json.NewEncoder(w).Encode(token)
 
 	log.Println("Logged in Succesfully")
 	///storing id in the session when authenticated  successfully

@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"net/http"
 	"testing"
 )
 
@@ -24,11 +25,11 @@ var LoginTest = []struct {
 
 func TestLogin(t *testing.T) {
 	for _, e := range LoginTest {
-		token, _, err := GenerateToken(e.id, e.email)
+		_, err := GenerateJWT(e.email)
 		if err != nil {
 			return
 		}
-		ValidateToken(token)
+		ValidateToken(&http.Request{})
 
 	}
 

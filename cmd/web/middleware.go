@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/Philip-21/bookings/internal/helpers"
@@ -32,25 +31,15 @@ func SessionLoad(next http.Handler) http.Handler {
 func Auth(next http.Handler) http.Handler {
 	//calling the helpers func that requires a pointer to http.request as a parameter
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		helpers.ValidateToken(&http.Request{})
+
 		if !helpers.IsAuthenticated(r) {
 			//not authenticted
 			session.Put(r.Context(), "error", "log in first!")
 			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 			return
 		}
-		UserToken := r.Header.Get("user-token")
-		if UserToken == "" {
-			http.Error(w, "Authorization headers not provided", http.StatusInternalServerError)
-			return
-		}
-		Payload, err := helpers.ValidateToken(UserToken)
-		if err != "" {
-			log.Println("Coudnt validate token ")
-			return
-		}
-		r.Response.Request.Header.Set("id", Payload.Id)
-		r.Response.Request.Header.Set("email", Payload.Email)
-		log.Println("Token Validated")
 
 		next.ServeHTTP(w, r)
 

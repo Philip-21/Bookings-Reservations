@@ -10,6 +10,7 @@ type User struct {
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	AccessLevel int    `json:"accesslevel"`
+	Role        string `json:"role"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
