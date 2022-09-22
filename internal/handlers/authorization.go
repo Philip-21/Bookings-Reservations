@@ -126,10 +126,9 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		log.Println("error in generating JSON")
 		return
 	}
+	json.NewEncoder(w).Encode(token)
 	r.Header.Set("Token", token)
 	w.Header().Set("Content-Type", "application/json")
-	//json.NewEncoder(w).Encode(token)
-
 	log.Println("Logged in Succesfully")
 	///storing id in the session when authenticated  successfully
 	m.App.Session.Put(r.Context(), "user_id", id)

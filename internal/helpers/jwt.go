@@ -32,10 +32,16 @@ func GenerateJWT(email string) (string, error) {
 
 func ValidateToken(r *http.Request) (string, error) {
 	if r.Header["Token"] != nil {
+		var w http.ResponseWriter
+		//retrieve the token from the header
 		tokenString := r.Header["Token"][0]
+		//parse the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-
-			if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+			//verify the signature
+			_, ok := token.Method.(*jwt.SigningMethodECDSA)
+			if !ok {
+				http.Error(w, "No Authorization Headers", http.StatusInternalServerError)
+				http.Error(w, "Error with Signing Methos", http.StatusInternalServerError)
 				return nil, fmt.Errorf("there's an error with the signing method")
 			}
 			return SECRET_KEY, nil
