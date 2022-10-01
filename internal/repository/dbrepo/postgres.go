@@ -77,7 +77,7 @@ func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email str
 	query := `
 	INSERT INTO users (first_name, last_name, email, password, created_at, updated_at)
 	values
-	($1, $2, $3, $4, $5, $6)
+	($1, $2, $3, $4, $5, $6) returning first_name, last_name, email, password
 	`
 
 	//var id int

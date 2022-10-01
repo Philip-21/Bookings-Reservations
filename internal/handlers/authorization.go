@@ -42,11 +42,10 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	lastname := r.Form.Get("lastname")
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
-
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
 
 	form := forms.New(r.PostForm)
-	form.Required("firstname", "lastname", "email", "password", "confirmPassword") //must be filled shows field cant be blank
+	form.Required("firstname", "lastname", "email", "password") //must be filled shows field cant be blank
 	form.IsEmail("email")
 	form.MinLength("password", 8)
 	if !form.Valid() {
@@ -68,14 +67,8 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	err = json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(err)
-		return
-	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+
 	log.Println("Signed Up Successfully")
 
 	m.App.Session.Put(r.Context(), "email", user)
