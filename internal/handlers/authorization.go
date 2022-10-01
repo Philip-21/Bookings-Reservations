@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 
@@ -43,14 +42,9 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	lastname := r.Form.Get("lastname")
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
-	confirmPassword := r.Form.Get("confirmPassword")
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
-	con := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(confirmPassword))
-	if con == bcrypt.ErrMismatchedHashAndPassword {
-		errors.New("Incorrect password")
-		return
-	}
+
 	form := forms.New(r.PostForm)
 	form.Required("firstname", "lastname", "email", "password", "confirmPassword") //must be filled shows field cant be blank
 	form.IsEmail("email")
@@ -64,7 +58,7 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, _, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword), string(confirmPassword))
+	user, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
 		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
