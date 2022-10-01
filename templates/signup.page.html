@@ -50,12 +50,22 @@
                            id="password" autocomplete="off" type='password'
                            name='password' value="" required>
                     </div> 
+
+
+                    <div class="form-group ">
+                        <label for="password">Confirm Password:</label>
+                        {{with .Form.Errors.Get "confirmPassword"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
+                            <label class="text-danger">{{.}}</label>
+                        {{end}}
+                        <input class="form-control {{with .Form.Errors.Get "confirmPassword"}} is-invalid {{end}}"
+                            id="confirm_password" autocomplete="off" type='password'
+                            name='confirm_password' value="" required>
+                        </div> 
                     <hr>
                     <!--submit button-->
                        <input type="submit" class="btn btn-primary" value="submit">          
             </form>
          </div>
-
       </div>
 </div>
 {{end}}

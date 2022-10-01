@@ -8,7 +8,7 @@ import (
 
 //m *postgresDBRepo is the struct that implments the DatabaseRepo(interface) because it implements the functions in the interface by acting as its reveiver
 
-//Repository helps to swap contents of the application with a minimal changes requiredin the code base
+// Repository helps to swap contents of the application with a minimal changes requiredin the code base
 type DatabaseRepo interface {
 	AllUsers() bool
 
@@ -18,7 +18,7 @@ type DatabaseRepo interface {
 	SearchAvailabilityForAllRooms(start, end time.Time) ([]models.Room, error)
 	GetRoomByID(id int) (models.Room, error)
 	GetUserByID(id int) (models.User, error)
-	CreateUser(firstname string, lastname string, email string, password string) (string, string, string, string, error)
+	CreateUser(firstname string, lastname string, email string, password string, confirmedPassword string) (string, string, string, string, string, error)
 	UpdateUser(u models.User) error
 	Authenticate(email, testPassword string) (int, string, error)
 	AllReservations() ([]models.Reservation, error)

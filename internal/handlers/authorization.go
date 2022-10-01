@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
@@ -42,10 +43,16 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 	lastname := r.Form.Get("lastname")
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+	confirmPassword := r.Form.Get("confirmPassword")
 
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+	con := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(confirmPassword))
+	if con == bcrypt.ErrMismatchedHashAndPassword {
+		errors.New("Incorrect password")
+		return
+	}
 	form := forms.New(r.PostForm)
-	form.Required("firstname", "lastname", "email", "password") //must be filled shows field cant be blank
+	form.Required("firstname", "lastname", "email", "password", "confirmPassword") //must be filled shows field cant be blank
 	form.IsEmail("email")
 	form.MinLength("password", 8)
 	if !form.Valid() {
@@ -57,7 +64,7 @@ func (m *Repository) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword))
+	user, _, _, _, _, err := m.DB.CreateUser(firstname, lastname, email, string(hashedPassword), string(confirmPassword))
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "cant fill signup credentials!")
 		http.Redirect(w, r, "/user/signup", http.StatusSeeOther)
@@ -112,6 +119,11 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
+	_, err = json.Marshal(id)
+	if err != nil {
+		log.Println("error in generating JSON")
+		return
+	}
 	token, err := helpers.GenerateJWT(email)
 	if err != nil {
 		http.Error(w, "error in generating token", http.StatusInternalServerError)
@@ -126,6 +138,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		log.Println("error in generating JSON")
 		return
 	}
+
 	json.NewEncoder(w).Encode(token)
 	r.Header.Set("Token", token)
 	w.Header().Set("Content-Type", "application/json")
