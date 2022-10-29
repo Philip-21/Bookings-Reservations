@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  
+
+  bookings-service:
+    build: 
+      context: ./dockerfile
+      dockerfile: ./dockerfile
+    restart: always
+    ports:
+     - "8080:8080"
+
+    depends_on:
+    - postgres
+    deploy:
+     mode: replicated
+     replicas: 1 #listens to 1 port only 
+
+  postgres: 
+   image: 'postgres:14.2'
+   ports:
+    - "5432:5432"
+   restart: "always"
+
+   deploy: 
+    mode: replicated 
+    replicas: 1
+   environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: philippians
+      POSTGRES_DB: postgres
+   volumes:
+     - ./db-data/postgres/:/var/lib/postgresql/data/   
+      

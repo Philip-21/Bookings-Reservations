@@ -12,8 +12,8 @@ import (
 //configuration file will be accessed and imported into other parts of the application
 //config file will only import standard libraries and not other files/dir of the application without any logic  to prevent import cycle and this makes the app not to compile
 
-//holds the application configuration,this app config helps in adding items to it
-//the main application repository for swapping contents
+// holds the application configuration,this app config helps in adding items to it
+// the main application repository for swapping contents
 type AppConfig struct {
 	UseCache      bool
 	TemplateCache map[string]*template.Template //new templates are stored
@@ -33,13 +33,14 @@ type Envconfig struct {
 	SSLMode  string `mapstructure:"DB_sslmode"`
 }
 
-//conf variable will be accesed by other files and packages within the app
+// conf variable will be accesed by other files and packages within the app
 var Conf *Envconfig
 
 // LoadConfig reads configuration from file or environment variables.
 func LoadConfig() {
 	viper.AddConfigPath(".")
 	viper.SetConfigFile("app.env")
+
 	viper.SetConfigType("env")
 	err := viper.ReadInConfig()
 	if err != nil {

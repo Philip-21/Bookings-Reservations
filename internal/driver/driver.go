@@ -5,6 +5,7 @@ package driver
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/Philip-21/bookings/internal/config"
@@ -20,7 +21,7 @@ type DB struct {
 
 var dbConn = &DB{}
 
-//defining nature of connection pool
+// defining nature of connection pool
 const maxOpenDbConn = 10 //max connections to db open at a given time
 const maxIdleDbConn = 5  //connections that remain idle in the db pool
 const maxDbLifetime = 5 * time.Minute
@@ -46,10 +47,12 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Println("connected to Postgres")
 	return dbConn, nil
+
 }
 
-//testDB tries to ping the database (ping troubleshoots connectivity)
+// testDB tries to ping the database (ping troubleshoots connectivity)
 func testDB(d *sql.DB) error {
 	err := d.Ping()
 	if err != nil {
