@@ -6,6 +6,7 @@ COPY . /app
 
 WORKDIR /app
 
+#runnung stage 
 RUN CGO_ENABLE=0 go build -o bookingsApp ./cmd/web
 
 RUN chmod +x /app/bookingsApp

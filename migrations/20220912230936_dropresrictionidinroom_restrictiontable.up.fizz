@@ -1,3 +1,0 @@
-
-drop_foreign_key("room_restrictions", "room_restrictions_restrictions_id_fk", {})
-drop_table("restrictions")

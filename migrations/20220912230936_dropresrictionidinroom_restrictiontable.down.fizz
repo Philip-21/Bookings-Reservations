@@ -1,1 +1,0 @@
-drop_column("room_restrictions","room_restrictions_restrictions_id",{})
