@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Philip-21/bookings/internal/config"
+
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -27,50 +28,42 @@ const maxIdleDbConn = 5  //connections that remain idle in the db pool
 const maxDbLifetime = 5 * time.Minute
 
 // ConnectSQL creates database pool for Postgres
+
 func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s port=%s dbname=%s user=%s  password=%s sslmode=%s",
 		connect.Host, connect.Port, connect.DBName, connect.User, connect.Password, connect.SSLMode,
 	)
-	d, err := NewDatabase(dsn)
-	if err != nil {
-		panic(err)
-	}
-
-	d.SetMaxOpenConns(maxOpenDbConn)
-	d.SetMaxIdleConns(maxIdleDbConn)
-	d.SetConnMaxLifetime(maxDbLifetime)
-
-	dbConn.SQL = d
-
-	err = testDB(d)
-	if err != nil {
-		return nil, err
-	}
-	log.Println("connected to Postgres")
-	return dbConn, nil
-
-}
-
-// testDB tries to ping the database (ping troubleshoots connectivity)
-func testDB(d *sql.DB) error {
-	err := d.Ping()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewDatabase creates a new database for the application
-func NewDatabase(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = db.Ping(); err != nil {
+	db.SetMaxOpenConns(maxOpenDbConn)
+	db.SetMaxIdleConns(maxIdleDbConn)
+	db.SetConnMaxLifetime(maxDbLifetime)
+	dbConn.SQL = db
+
+	//ping troubleshoots connectivity
+	err = db.Ping()
+	if err != nil {
 		return nil, err
 	}
+	log.Println("connected to postgres successfully")
+	// driver, err := postgres.WithInstance(db, &postgres.Config{})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return nil, err
+	// }
+	// m, err := migrate.NewWithDatabaseInstance(
+	// 	"./migrations",
+	// 	"postgres", driver)
+	// m.Up() //applies all up migrations
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return nil, err
+	// }
+	// log.Println("Migrations Successful")
 
-	return db, nil
+	return dbConn, nil
 }

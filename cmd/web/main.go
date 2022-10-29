@@ -28,6 +28,7 @@ var errorLog *log.Logger
 // the main application function that runs the application
 func main() {
 	db, err := run()
+
 	if err != nil {
 		log.Fatal(err) //will stop the applicatio
 	}
