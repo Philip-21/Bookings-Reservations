@@ -7,7 +7,7 @@ import (
 	"github.com/Philip-21/bookings/internal/repository"
 )
 
-//main db repository for receiving contents
+// main db repository for receiving contents
 type postgresDBRepo struct {
 	App *config.AppConfig
 	DB  *sql.DB //db connection pool
