@@ -40,7 +40,7 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 		"host=%s port=%s dbname=%s user=%s  password=%s sslmode=%s",
 		connect.Host, connect.Port, connect.DBName, connect.User, connect.Password, connect.SSLMode,
 	)
-	db, err := sql.Open("pgx", dsn)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	m, err := migrate.NewWithDatabaseInstance("file:/migrations", "pgx", drv)
+	m, err := migrate.NewWithDatabaseInstance("file:./migrations/", "postgres", drv)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -69,6 +69,7 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	if err != nil {
 		if err == migrate.ErrNoChange || err == migrate.ErrLocked {
 			log.Printf("%v\n", err)
+			log.Println("error in migrations")
 		}
 
 		return nil, errors.Unwrap(err)
