@@ -25,7 +25,7 @@ create_table("rooms") {
 }
 
 create_table("restrictions") {
-	t.Column("id", "integer", {primary: true})
+  t.Column("id", "integer", {primary: true})
 	t.Column("restriction_name", "string", {"default": ""})	
 }
 

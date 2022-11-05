@@ -60,16 +60,17 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	m, err := migrate.NewWithDatabaseInstance("file:./migrations/", "postgres", drv)
+	m, err := migrate.NewWithDatabaseInstance("file://migrations/up", "postgres", drv)
 	if err != nil {
 		log.Fatal(err)
+		log.Println("error in migrations")
 		return nil, err
 	}
 	err = m.Up() //applies all up migrations
 	if err != nil {
 		if err == migrate.ErrNoChange || err == migrate.ErrLocked {
 			log.Printf("%v\n", err)
-			log.Println("error in migrations")
+
 		}
 
 		return nil, errors.Unwrap(err)

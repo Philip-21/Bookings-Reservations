@@ -10,3 +10,7 @@ build :
 
 run:
  web: ./cmd/web
+
+services:
+  web:
+   env_file: app.env
