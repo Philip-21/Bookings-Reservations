@@ -4,19 +4,14 @@ package driver
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/Philip-21/bookings/internal/config"
 
-	"github.com/golang-migrate/migrate"
-	"github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/jackc/pgconn"
-	_ "github.com/jackc/pgx/v4"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/lib/pq"
 
 	_ "github.com/mattes/migrate/source/file"
 )
@@ -56,27 +51,27 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 		return nil, err
 	}
 	log.Println("Connected to postgres successfully")
-	drv, err := postgres.WithInstance(db, &postgres.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	m, err := migrate.NewWithDatabaseInstance("file://migrations/up", "postgres", drv)
-	if err != nil {
-		log.Fatal(err)
-		log.Println("error in migrations")
-		return nil, err
-	}
-	err = m.Up() //applies all up migrations
-	if err != nil {
-		if err == migrate.ErrNoChange || err == migrate.ErrLocked {
-			log.Printf("%v\n", err)
+	// drv, err := postgres.WithInstance(db, &postgres.Config{})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// m, err := migrate.NewWithDatabaseInstance("file://migrations/up", "postgres", drv)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	log.Println("error in migrations")
+	// 	return nil, err
+	// }
+	// err = m.Up() //applies all up migrations
+	// if err != nil {
+	// 	if err == migrate.ErrNoChange || err == migrate.ErrLocked {
+	// 		log.Printf("%v\n", err)
 
-		}
+	// 	}
 
-		return nil, errors.Unwrap(err)
+	// 	return nil, errors.Unwrap(err)
 
-	}
-	log.Println("Migrations Successful")
+	// }
+	// log.Println("Migrations Successful")
 
 	return dbConn, nil
 }
