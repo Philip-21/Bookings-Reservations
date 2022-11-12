@@ -14,8 +14,8 @@ import (
 //always start a go function with a block letter so that it can be easily imported into anther directory e.g 	renders.Template(w, "home.page.html")
 //handlers create response and receives request for the clients
 
-//Repository helps to swap contents of our application with a minimal changes requiredin the code base
-//Repo is the repository used by for new handlers
+// Repository helps to swap contents of our application with a minimal changes requiredin the code base
+// Repo is the repository used by for new handlers
 var Repo *Repository
 
 // Repository is the repository type
@@ -45,7 +45,7 @@ func NewHandlers(r *Repository) {
 	Repo = r
 }
 
-//Home is the home page handler
+// Home is the home page handler
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "home.page.html", &models.TemplateData{})
 }

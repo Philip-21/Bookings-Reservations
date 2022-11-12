@@ -11,8 +11,6 @@ import (
 
 	"github.com/Philip-21/bookings/internal/config"
 	"github.com/Philip-21/bookings/internal/driver"
-	"github.com/Philip-21/bookings/internal/handlers"
-	"github.com/Philip-21/bookings/internal/helpers"
 	"github.com/Philip-21/bookings/internal/models"
 	"github.com/Philip-21/bookings/internal/render"
 	"github.com/alexedwards/scs/v2"
@@ -32,7 +30,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err) //will stop the applicatio
 	}
-	defer db.SQL.Close()      //after the application stops ,db closes
+	defer db.SQL.Close()
+	//after the application stops ,db closes
 	defer close(app.MailChan) //clossing the channel in the run function
 	fmt.Println("starting mail listener..... ... ")
 	listenForMail()
@@ -76,6 +75,27 @@ func run() (*driver.DB, error) {
 		log.Fatal("Cannot connect to database! Dying.....")
 	}
 	log.Println("Connected to database!")
+	err = driver.UserTable(db.SQL)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = driver.ReservationTable(db.SQL)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = driver.RoomTable(db.SQL)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = driver.RoomRestrictionTable(db.SQL)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// err = driver.Migrate()
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
 
 	tc, err := render.CreateTemplateCache() //new templates which are stored in the createtemplatecache are defined as tc
 	if err != nil {
@@ -111,10 +131,10 @@ func run() (*driver.DB, error) {
 	app.TemplateCache = tc //defining the app as tc which stores template cache
 
 	//application configurations
-	repo := handlers.NewRepo(&app, db) //new repository and database configuration
-	handlers.NewHandlers(repo)         //setting the repository in Newhandlers
-	render.NewRenderer(&app)
-	helpers.NewHelpers(&app) //pointing to a *config.AppConfig in the render dir
+	// repo := handlers.NewRepo(&app, db) //new repository and database configuration
+	// handlers.NewHandlers(repo)         //setting the repository in Newhandlers
+	// render.NewRenderer(&app)
+	// helpers.NewHelpers(&app) //pointing to a *config.AppConfig in the render dir
 
 	return db, nil
 }

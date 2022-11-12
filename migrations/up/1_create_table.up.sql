@@ -7,7 +7,14 @@ create_table("users") {
   t.Column("access_level", "integer", {"default": 1})
   
 }
+create_table("room_restrictions") {
+	t.Column("id", "integer", {primary: true})
+    t.Column("start_date", "date", {})
+    t.Column("end_date", "date", {})
+    t.Column("room_id", "integer", {})
+    t.Column("reservation_id","integer",{})
 
+}
 create_table("reservation"){
     t.Column("id","integer",{primary:true})
     t.Column("first_name", "string", {"default":""})
@@ -34,6 +41,16 @@ add_foreign_key("reservation","room_id",{"rooms":["id"]},{
     "on_update":"cascade",
 })
 
+add_foreign_key("room_restrictions", "room_id", {"rooms": ["id"]}, {
+    "on_delete": "cascade",
+    "on_update": "cascade",
+})
+
+
+add_foreign_key("room_restrictions", "reservation_id", {"reservation": ["id"]}, {
+    "on_delete": "cascade",
+    "on_update": "cascade",
+})
 add_index("room_restrictions",["start_date","end_date"],{})
 add_index("room_restrictions","room_id",{})
 add_index("room_restrictions","reservation_id",{})

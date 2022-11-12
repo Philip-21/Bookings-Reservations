@@ -11,7 +11,10 @@ import (
 	"github.com/Philip-21/bookings/internal/config"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/lib/pq"
+
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 
 	_ "github.com/mattes/migrate/source/file"
 )
@@ -35,7 +38,13 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 		"host=%s port=%s dbname=%s user=%s  password=%s sslmode=%s",
 		connect.Host, connect.Port, connect.DBName, connect.User, connect.Password, connect.SSLMode,
 	)
-	db, err := sql.Open("postgres", dsn)
+	db, err := sql.Open("pgx", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	//ping troubleshoots connectivity
+	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}
@@ -45,33 +54,38 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	db.SetConnMaxLifetime(maxDbLifetime)
 	dbConn.SQL = db
 
-	//ping troubleshoots connectivity
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
 	log.Println("Connected to postgres successfully")
-	// drv, err := postgres.WithInstance(db, &postgres.Config{})
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// m, err := migrate.NewWithDatabaseInstance("file://migrations/up", "postgres", drv)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// 	log.Println("error in migrations")
-	// 	return nil, err
-	// }
-	// err = m.Up() //applies all up migrations
-	// if err != nil {
-	// 	if err == migrate.ErrNoChange || err == migrate.ErrLocked {
-	// 		log.Printf("%v\n", err)
-
-	// 	}
-
-	// 	return nil, errors.Unwrap(err)
-
-	// }
-	// log.Println("Migrations Successful")
 
 	return dbConn, nil
 }
+
+// func Migrate() error {
+
+// 	db, err := sql.Open("postgres", "postgres://postgres:philippians@localhost:5432/postgres/?sslmode=disable")
+// 	if err != nil {
+// 		log.Panic(err)
+// 	}
+// 	drv, err := postgres.WithInstance(db, &postgres.Config{})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	m, err := migrate.NewWithDatabaseInstance("file://migrations/up", "postgres", drv)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 		log.Println("error in migrations")
+// 		return err
+// 	}
+// 	err = m.Up() //applies all up migrations
+// 	if err != nil {
+// 		if err == migrate.ErrNoChange || err == migrate.ErrLocked {
+// 			log.Printf("%v\n", err)
+
+// 		}
+
+// 		return errors.Unwrap(err)
+
+// 	}
+// 	log.Println("Migrations Successful")
+// 	return nil
+
+// }
