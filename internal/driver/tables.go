@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"log"
 	"time"
+
+	"github.com/Philip-21/bookings/internal/models"
 )
 
 func UserTable(db *sql.DB) error {
@@ -38,7 +40,10 @@ func UserTable(db *sql.DB) error {
 func RoomTable(db *sql.DB) error {
 	query := `CREATE TABLE IF NOT EXISTS rooms(
 		id int primary key ,
-		room_name character varying(225)
+		room_name character varying(225),
+		created_at timestamp(6) ,
+		updated_at timestamp(6) 
+		
 	)`
 
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
@@ -135,7 +140,29 @@ func AlterTable(db *sql.DB) error {
 
 }
 
-// func SeedDB() {
-// 	query := `Insert into rooms (id, room_name)
-// 	values(1,major-room )`
-// }
+// Insert into rooms(id, room_name) values(2, General Rooms)
+func SeedDB(db *sql.DB, r *models.Room) error {
+
+	query := `INSERT INTO rooms (id, room_name, created_at, updated_at) VALUES($1, $2, $3, $4);`
+	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelfunc()
+
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		log.Printf("Error %s when preparing SQL statement", err)
+		return err
+	}
+	defer stmt.Close()
+	res, err := stmt.ExecContext(ctx, r.ID, r.RoomName, r.CreatedAt, r.UpdatedAt)
+	if err != nil {
+		log.Printf("Error %s when inserting row into rooms table", err)
+		return err
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		log.Printf("Error %s when finding rows affected", err)
+		return err
+	}
+	log.Printf("%d rooms created ", rows)
+	return nil
+}

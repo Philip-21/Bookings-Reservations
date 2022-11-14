@@ -97,6 +97,27 @@ func run() (*driver.DB, error) {
 	if err != nil {
 		log.Panic(err)
 	}
+	p := models.Room{
+		ID:        1,
+		RoomName:  "Major-Suite",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	d := models.Room{
+		ID:        2,
+		RoomName:  "General-Rooms",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	err = driver.SeedDB(db.SQL, &p)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = driver.SeedDB(db.SQL, &d)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	tc, err := render.CreateTemplateCache() //new templates which are stored in the createtemplatecache are defined as tc
 	if err != nil {
