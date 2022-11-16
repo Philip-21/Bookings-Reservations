@@ -77,6 +77,8 @@ func run() (*driver.DB, error) {
 		log.Fatal("Cannot connect to database! Dying.....")
 	}
 	log.Println("Connected to database!")
+
+	//driver actions
 	err = driver.UserTable(db.SQL)
 	if err != nil {
 		log.Panic(err)

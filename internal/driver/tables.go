@@ -39,7 +39,7 @@ func UserTable(db *sql.DB) error {
 }
 func RoomTable(db *sql.DB) error {
 	query := `CREATE TABLE IF NOT EXISTS rooms(
-		id int primary key ,
+		id serial primary key ,
 		room_name character varying(225),
 		created_at timestamp(6) ,
 		updated_at timestamp(6) 
@@ -73,6 +73,8 @@ func ReservationTable(db *sql.DB) error {
 		start_date date, 
 		end_date date, 
 		room_id int ,
+		created_at timestamp(6),
+		updated_at timestamp(6),
 		processed int default 0
 		)`
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
