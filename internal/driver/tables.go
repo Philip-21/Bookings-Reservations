@@ -50,7 +50,7 @@ func RoomTable(db *sql.DB) error {
 	defer cancelfunc()
 	res, err := db.ExecContext(ctx, query)
 	if err != nil {
-		log.Printf("Error %s when creating Reservation table", err)
+		log.Printf("Error %s when creating Rooms table", err)
 		return err
 	}
 	rows, err := res.RowsAffected()
@@ -147,11 +147,12 @@ func AlterTable(db *sql.DB) error {
 // Insert into rooms(id, room_name) values(2, General Rooms)
 func SeedDB(db *sql.DB, r *models.Room) error {
 
-	query := `INSERT INTO rooms (id, room_name, created_at, updated_at) VALUES($1, $2, $3, $4);`
+	query := `INSERT INTO rooms IF NOT EXISTS(id, room_name, created_at, updated_at) VALUES($1, $2, $3, $4);`
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 
 	stmt, err := db.PrepareContext(ctx, query)
+
 	if err != nil {
 		log.Printf("Error %s when preparing SQL statement", err)
 		return err
@@ -160,6 +161,7 @@ func SeedDB(db *sql.DB, r *models.Room) error {
 	res, err := stmt.ExecContext(ctx, r.ID, r.RoomName, r.CreatedAt, r.UpdatedAt)
 	if err != nil {
 		log.Printf("Error %s when inserting row into rooms table", err)
+		log.Println("seeding db affected")
 		return err
 	}
 	rows, err := res.RowsAffected()
