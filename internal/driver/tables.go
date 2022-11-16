@@ -40,9 +40,9 @@ func UserTable(db *sql.DB) error {
 func RoomTable(db *sql.DB) error {
 	query := `CREATE TABLE IF NOT EXISTS rooms(
 		id serial primary key ,
-		room_name character varying(225),
-		created_at timestamp(6) ,
-		updated_at timestamp(6) 
+		room_name character varying(225)  NOT NULL,
+		created_at timestamp(6)  NOT NULL,
+		updated_at timestamp(6)  NOT NULL
 		
 	)`
 
@@ -70,12 +70,12 @@ func ReservationTable(db *sql.DB) error {
 		last_name character varying(255) NOT NULL, 
 		email character varying(225) NOT NULL,    
 		phone character varying(255) NOT NULL, 
-		start_date date, 
-		end_date date, 
-		room_id int ,
-		created_at timestamp(6),
-		updated_at timestamp(6),
-		processed int default 0
+		start_date date  NOT NULL, 
+		end_date date  NOT NULL, 
+		room_id int  NOT NULL,
+		created_at timestamp(6)  NOT NULL,
+		updated_at timestamp(6)  NOT NULL,
+		processed int default 0  NOT NULL
 		)`
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
@@ -97,10 +97,12 @@ func ReservationTable(db *sql.DB) error {
 func RoomRestrictionTable(db *sql.DB) error {
 	query := `CREATE TABLE IF NOT EXISTS room_restrictions(
 		id Serial primary key ,
-		start_date date, 
-		end_date date, 
-		room_id int,
-		reservation_id int
+		start_date date  NOT NULL, 
+		end_date date  NOT NULL, 
+		room_id int  NOT NULL,
+		reservation_id int,
+		created_at timestamp(6)  NOT NULL,
+		updated_at timestamp(6)  NOT NULL
 	)`
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
