@@ -144,14 +144,14 @@ func AlterTable(db *sql.DB) error {
 
 }
 
-// Insert into rooms(id, room_name) values(2, General Rooms)
 func SeedDB(db *sql.DB, r *models.Room) error {
 
 	query := `INSERT INTO rooms (id, room_name, created_at, updated_at)
 	          VALUES($1, $2, $3, $4)
 		    ON CONFLICT(id) DO NOTHING;
 		    `
-	//on conflict ignores duplicate values in db based on the constraint
+	//on conflict ignores duplicate values in db each time the program is runned
+	//based on the constraint id it does nothing
 
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
