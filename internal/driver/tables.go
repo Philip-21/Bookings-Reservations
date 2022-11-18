@@ -147,12 +147,16 @@ func AlterTable(db *sql.DB) error {
 // Insert into rooms(id, room_name) values(2, General Rooms)
 func SeedDB(db *sql.DB, r *models.Room) error {
 
-	query := `INSERT INTO rooms IF NOT EXISTS(id, room_name, created_at, updated_at) VALUES($1, $2, $3, $4);`
+	query := `INSERT INTO rooms (id, room_name, created_at, updated_at)
+	          VALUES($1, $2, $3, $4)
+		    ON CONFLICT(id) DO NOTHING;
+		    `
+	//on conflict ignores duplicate values in db based on the constraint
+
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 
 	stmt, err := db.PrepareContext(ctx, query)
-
 	if err != nil {
 		log.Printf("Error %s when preparing SQL statement", err)
 		return err
