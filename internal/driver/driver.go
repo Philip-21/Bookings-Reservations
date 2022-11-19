@@ -58,34 +58,3 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 
 	return dbConn, nil
 }
-
-// func Migrate() error {
-
-// 	db, err := sql.Open("postgres", "postgres://postgres:philippians@localhost:5432/postgres/?sslmode=disable")
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
-// 	drv, err := postgres.WithInstance(db, &postgres.Config{})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	m, err := migrate.NewWithDatabaseInstance("file://migrations/up", "postgres", drv)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 		log.Println("error in migrations")
-// 		return err
-// 	}
-// 	err = m.Up() //applies all up migrations
-// 	if err != nil {
-// 		if err == migrate.ErrNoChange || err == migrate.ErrLocked {
-// 			log.Printf("%v\n", err)
-
-// 		}
-
-// 		return errors.Unwrap(err)
-
-// 	}
-// 	log.Println("Migrations Successful")
-// 	return nil
-
-// }
