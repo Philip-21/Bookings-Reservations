@@ -139,9 +139,8 @@ func AlterTable(db *sql.DB) error {
 		return err
 	}
 	log.Printf("Rows affected when creating table: %d", rows)
-	log.Println("Foreign keys created")
+	log.Println("Foreign keys creatted")
 	return nil
-
 }
 
 func SeedDB(db *sql.DB, r *models.Room) error {
