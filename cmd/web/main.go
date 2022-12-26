@@ -79,7 +79,7 @@ func run() (*driver.DB, error) {
 	log.Println("Connected to database!")
 
 	log.Println("performing seeding actions")
-	//driver actions
+	//driver and migration actions
 	err = driver.UserTable(db.SQL)
 	if err != nil {
 		log.Panic(err)
