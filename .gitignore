@@ -2,6 +2,6 @@
 *.code-workspace
 
 schema.sql
-app.env
+
 
 
