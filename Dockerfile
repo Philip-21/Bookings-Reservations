@@ -17,4 +17,6 @@ RUN mkdir /app
 
 COPY --from=builder /app/bookingsApp /app
 
+RUN sudo docker run [...] --env-file ./app.env [...]
+
 CMD [ "/app/bookingsApp" ]
