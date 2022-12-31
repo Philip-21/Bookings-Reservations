@@ -132,8 +132,8 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	log.Println("Logged in Succesfully")
 	///storing id in the session when authenticated  successfully
 	m.App.Session.Put(r.Context(), "user_id", id)
-	m.App.Session.Put(r.Context(), "flash", "Logged in Successfully")
-	http.Redirect(w, r, "/", http.StatusSeeOther) //returns to home page after loggin successfully
+	m.App.Session.Put(r.Context(), "flash", "Logged in Successfully, Click the Admin Icon to Access the Dashbord")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // shows logout
