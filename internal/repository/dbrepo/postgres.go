@@ -93,8 +93,7 @@ func (m *postgresDBRepo) CreateUser(firstname string, lastname string, email str
 	return firstname, lastname, email, password, nil
 }
 
-//authenticate a user
-
+// authenticate a user
 func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
