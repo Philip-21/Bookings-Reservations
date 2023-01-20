@@ -53,6 +53,7 @@ func main() {
 		Addr:    portNumber,
 		Handler: routes(&app),
 	}
+	log.Println("application is ready to use ")
 
 	err = srv.ListenAndServe()
 	log.Fatal(err)
