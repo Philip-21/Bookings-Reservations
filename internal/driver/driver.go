@@ -40,6 +40,7 @@ func ConnectSQL(connect *config.Envconfig) (*DB, error) {
 	)
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

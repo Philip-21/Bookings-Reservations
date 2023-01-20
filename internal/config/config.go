@@ -25,12 +25,12 @@ type AppConfig struct {
 }
 
 type Envconfig struct {
-	Host     string `mapstructure:"DB_host"`
-	Port     string `mapstructure:"DB_port"`
-	Password string `mapstructure:"DB_password"`
-	User     string `mapstructure:"DB_user"`
-	DBName   string `mapstructure:"DB_name"`
-	SSLMode  string `mapstructure:"DB_sslmode"`
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Password string `mapstructure:"password"`
+	User     string `mapstructure:"user"`
+	DBName   string `mapstructure:"dbname"`
+	SSLMode  string `mapstructure:"sslmode"`
 }
 
 // conf variable will be accesed by other files and packages within the app

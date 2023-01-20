@@ -1,6 +1,6 @@
 .idea
 *.code-workspace
-
+database.yml
 schema.sql
 app.env
 
