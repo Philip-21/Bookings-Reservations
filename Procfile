@@ -1,0 +1,1 @@
+web : go build ./cmd/web 
