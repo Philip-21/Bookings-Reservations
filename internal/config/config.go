@@ -39,7 +39,7 @@ var Conf *Envconfig
 // LoadConfig reads configuration from file or environment variables.
 func LoadConfig() {
 	viper.AddConfigPath(".")
-	viper.SetConfigFile("deploy.env")
+	viper.SetConfigFile("rails.env")
 
 	viper.SetConfigType("env")
 	err := viper.ReadInConfig()
