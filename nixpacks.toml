@@ -11,6 +11,6 @@
   [packages.env]
     PORT = "8080"
   # Define the build command
-  buildCommand = "go build -o  ./cmd/web/main.go"
+  buildCommand = "go build ./cmd/web"
   # Define the command to start the app
   startCommand = "go run ./cmd/web"
