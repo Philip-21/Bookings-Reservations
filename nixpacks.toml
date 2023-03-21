@@ -1,0 +1,16 @@
+[nix]
+  version = "2.3.14"
+
+[packages.myapp]
+  # Use Go 1.17.1 from Nixpkgs
+  inherit = (pkgs) go
+  buildInputs = [
+    pkgs.go
+  ]
+  # Set the environment variable PORT to 8080
+  [packages.myapp.env]
+    PORT = "8080"
+  # Define the build command
+  buildCommand = "go build -o myapp ./cmd/web/main.go"
+  # Define the command to start the app
+  startCommand = "./myapp"
