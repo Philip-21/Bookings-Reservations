@@ -2,7 +2,7 @@
 
 This is the repository for my bookings and reservations project.
 
--Project url [BookingsWebApp](https://bookings-service-application.onrender.com/)
+- Project url [BookingsWebApp](https://bookings-service-application.onrender.com/)
 
 - Built with Go version 1.18
 - Uses the [chi router](https://github.com/go-chi/chi) for routing 
